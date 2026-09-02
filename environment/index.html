@@ -192,7 +192,13 @@
 
             renderSelection();
         };
-
+        // Evaluator-only interface. Never include this in Agent input.
+        window.getEvaluationState = function () {
+            return {
+                selected_ids: [...selected],
+                submitted_ids: submitted === null ? null : [...submitted]
+            };
+        };
         renderSelection();
     </script>
 </body>
