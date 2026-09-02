@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Visual Selection Environment</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: #f4f5f7;
+      color: #20242a;
+      font-family: Arial, sans-serif;
+    }
+
+    main {
+      width: 960px;
+      padding: 32px 60px;
+    }
+
+    h1 { margin: 0 0 12px; font-size: 26px; }
+    p { margin: 0 0 24px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 260px);
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      position: relative;
+      height: 150px;
+      border: 4px solid #b8bec8;
+      border-radius: 12px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    button.card { cursor: pointer; }
+
+    .card.selected { border-color: #20242a; }
+
+    .card.selected::after {
+      content: "✓";
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      font-size: 24px;
+      color: #20242a;
+    }
+
+    .shape { width: 70px; height: 70px; }
+    .circle { border-radius: 50%; }
+    .triangle { clip-path: polygon(50% 0, 0 100%, 100% 100%); }
+
+    .control {
+      padding: 12px 24px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <h1>Visual Selection</h1>
+
+    <section id="selection-view">
+      <p>Select objects, then submit.</p>
+      <div id="cards" class="grid"></div>
+      <button id="submit" class="control">Submit</button>
+    </section>
+
+    <section id="result-view" hidden>
+      <p>Submitted objects</p>
+      <div id="submitted-cards" class="grid"></div>
+      <button id="back" class="control">Back to selection</button>
+    </section>
+  </main>
+
+  <script>
+    const objects = [
+      { id: "a", color: "#dc2626", shape: "triangle" },
+      { id: "b", color: "#2563eb", shape: "circle" },
+      { id: "c", color: "#16a34a", shape: "square" },
+      { id: "d", color: "#dc2626", shape: "circle" },
+      { id: "e", color: "#2563eb", shape: "square" },
+      { id: "f", color: "#16a34a", shape: "triangle" }
+    ];
+
+    const selected = new Set();
+    let submitted = null;
+
+    const cards = document.querySelector("#cards");
+    const submittedCards = document.querySelector("#submitted-cards");
+    const selectionView = document.querySelector("#selection-view");
+    const resultView = document.querySelector("#result-view");
+
+    function createCard(object, interactive) {
+      const card = document.createElement(interactive ? "button" : "div");
+      card.className = "card";
+
+      const shape = document.createElement("div");
+      shape.className = `shape ${object.shape}`;
+      shape.style.backgroundColor = object.color;
+      card.appendChild(shape);
+
+      if (interactive) {
+        card.classList.toggle("selected", selected.has(object.id));
+
+        card.addEventListener("click", () => {
+          if (selected.has(object.id)) {
+            selected.delete(object.id);
+          } else {
+            selected.add(object.id);
+          }
+
+          card.classList.toggle("selected", selected.has(object.id));
+        });
+      }
+
+      return card;
+    }
+
+    function renderSelection() {
+      cards.replaceChildren();
+
+      for (const object of objects) {
+        cards.appendChild(createCard(object, true));
+      }
+    }
+
+    document.querySelector("#submit").addEventListener("click", () => {
+      submitted = [...selected];
+      submittedCards.replaceChildren();
+
+      for (const object of objects) {
+        if (submitted.includes(object.id)) {
+          submittedCards.appendChild(createCard(object, false));
+        }
+      }
+
+      if (submitted.length === 0) {
+        submittedCards.textContent = "No objects submitted.";
+      }
+
+      selectionView.hidden = true;
+      resultView.hidden = false;
+    });
+
+    document.querySelector("#back").addEventListener("click", () => {
+      resultView.hidden = true;
+      selectionView.hidden = false;
+    });
+
+    renderSelection();
+  </script>
+</body>
+</html>
