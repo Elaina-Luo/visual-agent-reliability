@@ -1,0 +1,286 @@
+[
+  {
+    "index": 0,
+    "file_name": "pc_ede36f9b-1154-4f76-b7f8-c15d7d3f9b6e.png",
+    "instruction": "close",
+    "data_type": "icon",
+    "data_source": "windows",
+    "image_width": 960,
+    "image_height": 540,
+    "bbox": [
+      0.9479166666666666,
+      0.14444444444444443,
+      0.99375,
+      0.2074074074074074
+    ],
+    "target_area_ratio": 0.0028858024691358064,
+    "latency_seconds": 3.2554232920001596,
+    "raw_output": "```json\n{\n    \"x\": 921,\n    \"y\": 87\n}\n```",
+    "predicted_pixel": [
+      921.0,
+      87.0
+    ],
+    "predicted_normalized": [
+      0.959375,
+      0.16111111111111112
+    ],
+    "correct": true,
+    "status": "correct",
+    "error": null
+  },
+  {
+    "index": 1,
+    "file_name": "pc_5e09e8e9-7ef6-44be-ad54-aeaeac151897.png",
+    "instruction": "minimize this window",
+    "data_type": "icon",
+    "data_source": "windows",
+    "image_width": 960,
+    "image_height": 540,
+    "bbox": [
+      0.8697916666666666,
+      0.0,
+      0.9072916666666667,
+      0.05555555555555555
+    ],
+    "target_area_ratio": 0.002083333333333338,
+    "latency_seconds": 2.4424442669997006,
+    "raw_output": "```json\n{\n    \"x\": 837,\n    \"y\": 12\n}\n```",
+    "predicted_pixel": [
+      837.0,
+      12.0
+    ],
+    "predicted_normalized": [
+      0.871875,
+      0.022222222222222223
+    ],
+    "correct": true,
+    "status": "correct",
+    "error": null
+  },
+  {
+    "index": 2,
+    "file_name": "pc_2c6dc6ea-fd6f-4cbb-9954-2d6a68610a48.png",
+    "instruction": "play the solitaire collection",
+    "data_type": "text",
+    "data_source": "windows",
+    "image_width": 1920,
+    "image_height": 1080,
+    "bbox": [
+      0.134375,
+      0.1287037037037037,
+      0.8635416666666667,
+      0.3435185185185185
+    ],
+    "target_area_ratio": 0.15663580246913578,
+    "latency_seconds": 6.199475166999946,
+    "raw_output": "```json\n{\n    \"x\": 613,\n    \"y\": 317\n}\n```",
+    "predicted_pixel": [
+      613.0,
+      317.0
+    ],
+    "predicted_normalized": [
+      0.31927083333333334,
+      0.2935185185185185
+    ],
+    "correct": true,
+    "status": "correct",
+    "error": null
+  },
+  {
+    "index": 3,
+    "file_name": "pc_b072d03a-51cb-4dd6-bdeb-152d3fd44e6b.png",
+    "instruction": "open the gallery",
+    "data_type": "text",
+    "data_source": "windows",
+    "image_width": 960,
+    "image_height": 540,
+    "bbox": [
+      0.29270833333333335,
+      0.11296296296296296,
+      0.4,
+      0.3055555555555556
+    ],
+    "target_area_ratio": 0.020663580246913584,
+    "latency_seconds": 1.8355947499999274,
+    "raw_output": "```json\n{\n    \"x\": 327,\n    \"y\": 110\n}\n```",
+    "predicted_pixel": [
+      327.0,
+      110.0
+    ],
+    "predicted_normalized": [
+      0.340625,
+      0.2037037037037037
+    ],
+    "correct": true,
+    "status": "correct",
+    "error": null
+  },
+  {
+    "index": 4,
+    "file_name": "pc_ac2d2c5e-fe5a-4233-95b4-2de18ef76a9e.png",
+    "instruction": "adjust the style",
+    "data_type": "text",
+    "data_source": "windows",
+    "image_width": 960,
+    "image_height": 540,
+    "bbox": [
+      0.6614583333333334,
+      0.6666666666666666,
+      0.7052083333333333,
+      0.7833333333333333
+    ],
+    "target_area_ratio": 0.005104166666666663,
+    "latency_seconds": 1.9075625340001352,
+    "raw_output": "```json\n{\n    \"x\": 643, \n    \"y\": 371\n}\n```",
+    "predicted_pixel": [
+      643.0,
+      371.0
+    ],
+    "predicted_normalized": [
+      0.6697916666666667,
+      0.687037037037037
+    ],
+    "correct": true,
+    "status": "correct",
+    "error": null
+  },
+  {
+    "index": 5,
+    "file_name": "pc_f0122b91-3f8b-4510-9a6e-f0239d84b94e.png",
+    "instruction": "minimize calculator",
+    "data_type": "icon",
+    "data_source": "windows",
+    "image_width": 960,
+    "image_height": 540,
+    "bbox": [
+      0.7260416666666667,
+      0.11666666666666667,
+      0.7614583333333333,
+      0.17592592592592593
+    ],
+    "target_area_ratio": 0.0020987654320987646,
+    "latency_seconds": 1.7855617310001435,
+    "raw_output": "```json\n{\n    \"x\": 718,\n    \"y\": 73\n}\n```",
+    "predicted_pixel": [
+      718.0,
+      73.0
+    ],
+    "predicted_normalized": [
+      0.7479166666666667,
+      0.13518518518518519
+    ],
+    "correct": true,
+    "status": "correct",
+    "error": null
+  },
+  {
+    "index": 6,
+    "file_name": "pc_354a6cb2-3fe0-4cea-950c-d7f8e01fdf45.png",
+    "instruction": "open the download page",
+    "data_type": "icon",
+    "data_source": "windows",
+    "image_width": 960,
+    "image_height": 540,
+    "bbox": [
+      0.878125,
+      0.012962962962962963,
+      0.928125,
+      0.08518518518518518
+    ],
+    "target_area_ratio": 0.003611111111111106,
+    "latency_seconds": 1.9921195420001823,
+    "raw_output": "```json\n{\n    \"x\": 857,\n    \"y\": 23\n}\n```",
+    "predicted_pixel": [
+      857.0,
+      23.0
+    ],
+    "predicted_normalized": [
+      0.8927083333333333,
+      0.04259259259259259
+    ],
+    "correct": true,
+    "status": "correct",
+    "error": null
+  },
+  {
+    "index": 7,
+    "file_name": "pc_d6b09201-c944-4ad9-a0a2-ff78e8f056ce.png",
+    "instruction": "help menu",
+    "data_type": "text",
+    "data_source": "windows",
+    "image_width": 960,
+    "image_height": 540,
+    "bbox": [
+      0.0010416666666666667,
+      0.8037037037037037,
+      0.07083333333333333,
+      0.9259259259259259
+    ],
+    "target_area_ratio": 0.008530092592592594,
+    "latency_seconds": 2.1424935760001063,
+    "raw_output": "```json\n{\n    \"x\": 31,\n    \"y\": 472\n}\n```",
+    "predicted_pixel": [
+      31.0,
+      472.0
+    ],
+    "predicted_normalized": [
+      0.03229166666666667,
+      0.8740740740740741
+    ],
+    "correct": true,
+    "status": "correct",
+    "error": null
+  },
+  {
+    "index": 8,
+    "file_name": "pc_db6b6fa2-11cc-4b06-88cb-22c180f07a3b.png",
+    "instruction": "save the file",
+    "data_type": "icon",
+    "data_source": "windows",
+    "image_width": 960,
+    "image_height": 540,
+    "bbox": [
+      0.009375,
+      0.0,
+      0.04583333333333333,
+      0.05740740740740741
+    ],
+    "target_area_ratio": 0.0020929783950617282,
+    "latency_seconds": 3.7761324540001624,
+    "raw_output": "There are no visible buttons or options for saving the file on the current screenshot provided. The interface shown appears to be a Microsoft PowerPoint slide editing screen, not the main menu where you would typically find the 'Save' option. To save the file, you would need to navigate to the 'File' tab at the top",
+    "predicted_pixel": null,
+    "predicted_normalized": null,
+    "correct": false,
+    "status": "no_valid_action",
+    "error": "No JSON object found"
+  },
+  {
+    "index": 9,
+    "file_name": "pc_6dfa677c-7772-46fb-8c83-14a33b0806b4.png",
+    "instruction": "search for software ",
+    "data_type": "text",
+    "data_source": "windows",
+    "image_width": 960,
+    "image_height": 540,
+    "bbox": [
+      0.32916666666666666,
+      0.0,
+      0.9552083333333333,
+      0.07037037037037037
+    ],
+    "target_area_ratio": 0.04405478395061728,
+    "latency_seconds": 1.8081628129998535,
+    "raw_output": "```json\n{\n    \"x\": 481,\n    \"y\": 17\n}\n```",
+    "predicted_pixel": [
+      481.0,
+      17.0
+    ],
+    "predicted_normalized": [
+      0.5010416666666667,
+      0.03148148148148148
+    ],
+    "correct": true,
+    "status": "correct",
+    "error": null
+  }
+]
