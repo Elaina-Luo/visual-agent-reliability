@@ -2,3 +2,6 @@
 playwright==1.62.0
 pyee==13.0.1
 typing_extensions==4.16.0
+datasets==5.0.1
+matplotlib==3.11.1
+pillow==12.3.0
