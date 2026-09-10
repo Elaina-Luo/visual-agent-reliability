@@ -40,9 +40,15 @@ Those fields are stored only in the trace for later auditing.
 ## Termination and scoring
 
 The action budget is eight. An episode ends when the Agent calls `finish`, the
-budget is exhausted, or inference fails. Success requires an explicit finish,
-the requested value in saved settings, no unapplied changes, and no open
-confirmation dialog.
+budget is exhausted, or inference fails. The evaluator reports three fields:
+
+- `task_state_success`: the requested value was saved, with no unapplied
+  changes or open confirmation dialog;
+- `agent_terminated_correctly`: the Agent explicitly returned `finish`; and
+- `success`: both conditions are true.
+
+This exposes cases where the Agent completes the GUI task but continues acting
+until its step budget is exhausted.
 
 ## First smoke-test sequence
 
