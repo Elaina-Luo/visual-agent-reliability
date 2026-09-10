@@ -57,6 +57,10 @@ included in the model prompt.
 correct coordinate-click traces and validate the environment. The future Agent
 will not receive DOM access or test identifiers; it will act from screenshots.
 
-The current checkpoint validates normal scripted execution. Controlled click
-failure and delayed-feedback injection will be connected after this check
-passes locally.
+The first Settings App fault mode drops the first click that would change a
+setting. Navigation, Save, and confirmation clicks are unaffected. Hidden audit
+state verifies that the dropped action leaves the page unchanged. The scripted
+check compares no retry against one repeated setting click; it validates the
+fault mechanism, not autonomous Agent recovery.
+
+Delayed-feedback injection remains a later extension.
