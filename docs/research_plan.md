@@ -45,8 +45,10 @@ packaged reproducibly.
 - [ ] Add paired failure examples and uncertainty estimates.
 - [x] Validate deterministic click-failure injection locally.
 - [x] Validate the multi-step Settings App task families locally.
-- [ ] Validate Settings App failure injection and scripted recovery locally.
-- [ ] Connect the VLM agent and begin Part B controlled comparisons.
+- [x] Validate Settings App failure injection and scripted recovery locally.
+- [ ] Run and inspect one normal B0 Qwen Agent smoke test.
+- [ ] Run and inspect one faulted B0 Qwen Agent smoke test.
+- [ ] Freeze B0 before implementing verification strategies.
 
 ## Interpretation boundary
 

@@ -20,7 +20,8 @@ episode cannot succeed without changing the setting.
 ## Agent-visible information
 
 - Natural-language goal.
-- Current 960 × 640 screenshot.
+- Current 980 × 644 screenshot. Both dimensions are divisible by Qwen's
+  28-pixel visual-processing factor, avoiding an extra coordinate resize.
 - Previous action and a bounded recent history.
 - Remaining action budget.
 

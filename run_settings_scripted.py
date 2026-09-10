@@ -126,7 +126,7 @@ def main():
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=False)
         page = browser.new_page(
-            viewport={"width": 960, "height": 640},
+            viewport={"width": 980, "height": 644},
             device_scale_factor=1,
         )
         page.goto((PROJECT_DIR / "environment" / "settings.html").as_uri())
