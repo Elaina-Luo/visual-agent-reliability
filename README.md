@@ -133,10 +133,11 @@ Run the B1 visual-verification strategy with the same task and action budget:
 python run_settings_verified_agent.py --seed 0 --fault-mode none
 ```
 
-B1 reuses the Actor's loaded Qwen model as a separate Verifier role. After
-each click it compares before/after screenshots, can retry one visually
-ineffective click, and can terminate on visually verified completion. Retries
-count against the eight-action budget; Verifier calls and latency are recorded.
+B1 reuses the Actor's loaded Qwen model as a separate semantic Verifier and
+combines it with deterministic screenshot-difference detection. It can retry
+one visually ineffective click and terminate on visually verified completion.
+Retries count against the eight-action budget; pixel-change measurements,
+Verifier calls, and latency are recorded.
 
 See the [Settings App task specification](docs/settings_task_spec.md) for the
 observation, action, success, and hidden-information contract.
