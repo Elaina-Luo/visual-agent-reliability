@@ -10,7 +10,10 @@ def task_state_succeeded(state, task):
 def evaluate_episode(state, task, termination_reason):
     """Separate task completion from the Agent's decision to stop."""
     task_state_success = task_state_succeeded(state, task)
-    agent_terminated_correctly = termination_reason == "agent_finish"
+    agent_terminated_correctly = termination_reason in {
+        "agent_finish",
+        "verifier_complete",
+    }
 
     return {
         "task_state_success": task_state_success,
