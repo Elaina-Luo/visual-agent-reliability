@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Northstar Settings</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #172033;
+            --muted: #687086;
+            --line: #dfe3eb;
+            --panel: #ffffff;
+            --canvas: #edf1f7;
+            --nav: #111a2e;
+            --nav-muted: #aeb8cf;
+            --accent: #5b5ce2;
+            --accent-soft: #ededff;
+            --success: #16795b;
+            --shadow: 0 22px 55px rgba(22, 31, 51, 0.16);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-width: 760px;
+            min-height: 640px;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 15% 0%, #dce5ff 0, transparent 34%),
+                var(--canvas);
+            color: var(--ink);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+                BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        button {
+            font: inherit;
+        }
+
+        .app-shell {
+            width: 920px;
+            height: 600px;
+            margin: 20px auto;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.82);
+            border-radius: 22px;
+            background: var(--panel);
+            box-shadow: var(--shadow);
+            display: grid;
+            grid-template-columns: 220px 1fr;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            padding: 24px 16px 18px;
+            background: var(--nav);
+            color: white;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 0 10px 24px;
+            font-size: 17px;
+            font-weight: 750;
+            letter-spacing: 0.01em;
+        }
+
+        .brand-mark {
+            width: 30px;
+            height: 30px;
+            border-radius: 9px;
+            background: linear-gradient(145deg, #8b8cff, #5051cf);
+            display: grid;
+            place-items: center;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        }
+
+        .brand-mark::before {
+            content: "N";
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .nav-label {
+            margin: 0 10px 9px;
+            color: #7f8aa5;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .nav-item {
+            width: 100%;
+            min-height: 44px;
+            margin-bottom: 5px;
+            padding: 0 12px;
+            border: 0;
+            border-radius: 11px;
+            background: transparent;
+            color: var(--nav-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: rgba(117, 119, 255, 0.18);
+            color: white;
+        }
+
+        .nav-icon {
+            width: 22px;
+            color: currentColor;
+            text-align: center;
+            font-size: 17px;
+        }
+
+        .workspace-badge {
+            margin-top: auto;
+            padding: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .workspace-badge strong,
+        .workspace-badge span {
+            display: block;
+        }
+
+        .workspace-badge strong {
+            margin-bottom: 3px;
+            font-size: 14px;
+        }
+
+        .workspace-badge span {
+            color: #929db7;
+            font-size: 12px;
+        }
+
+        .main-panel {
+            min-width: 0;
+            display: grid;
+            grid-template-rows: 78px 1fr 76px;
+            background: #fbfcfe;
+        }
+
+        .topbar {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--line);
+            background: rgba(255, 255, 255, 0.86);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .title-block h1 {
+            margin: 0 0 3px;
+            font-size: 21px;
+            line-height: 1.2;
+        }
+
+        .title-block p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .profile-chip {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: #3e475b;
+            font-size: 13px;
+            font-weight: 650;
+        }
+
+        .avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #dce0ff;
+            color: #4748c7;
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+        }
+
+        .content {
+            overflow: hidden;
+            padding: 24px 30px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-heading {
+            margin-bottom: 18px;
+        }
+
+        .section-heading h2 {
+            margin: 0 0 5px;
+            font-size: 18px;
+        }
+
+        .section-heading p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .settings-card {
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: white;
+        }
+
+        .setting-row {
+            min-height: 72px;
+            padding: 14px 17px;
+            border-bottom: 1px solid #e8ebf1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .setting-row:last-child {
+            border-bottom: 0;
+        }
+
+        .setting-copy strong,
+        .setting-copy span {
+            display: block;
+        }
+
+        .setting-copy strong {
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .setting-copy span {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.35;
+        }
+
+        .switch {
+            position: relative;
+            flex: 0 0 auto;
+            width: 45px;
+            height: 25px;
+            padding: 0;
+            border: 0;
+            border-radius: 999px;
+            background: #c8ced9;
+            cursor: pointer;
+            transition: background 150ms ease;
+        }
+
+        .switch::after {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 19px;
+            height: 19px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 2px 5px rgba(20, 29, 48, 0.22);
+            transition: transform 150ms ease;
+        }
+
+        .switch[aria-checked="true"] {
+            background: var(--accent);
+        }
+
+        .switch[aria-checked="true"]::after {
+            transform: translateX(20px);
+        }
+
+        .segmented {
+            padding: 3px;
+            border: 1px solid #d8dce6;
+            border-radius: 10px;
+            background: #f2f4f8;
+            display: flex;
+            gap: 3px;
+        }
+
+        .segment {
+            min-width: 85px;
+            height: 32px;
+            padding: 0 12px;
+            border: 0;
+            border-radius: 7px;
+            background: transparent;
+            color: #5d6576;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 650;
+        }
+
+        .segment.active {
+            background: white;
+            color: var(--accent);
+            box-shadow: 0 1px 4px rgba(25, 34, 55, 0.13);
+        }
+
+        .select-control {
+            min-width: 150px;
+            height: 36px;
+            padding: 0 12px;
+            border: 1px solid #d8dce6;
+            border-radius: 9px;
+            background: white;
+            color: #3e475b;
+            font-size: 13px;
+        }
+
+        .footer {
+            padding: 15px 30px;
+            border-top: 1px solid var(--line);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .save-status {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .save-status.unsaved {
+            color: #a25b12;
+            font-weight: 650;
+        }
+
+        .primary-button,
+        .secondary-button {
+            min-height: 40px;
+            padding: 0 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .primary-button {
+            border: 0;
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 6px 14px rgba(91, 92, 226, 0.22);
+        }
+
+        .primary-button:disabled {
+            background: #b8bdc9;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .secondary-button {
+            border: 1px solid #d5d9e3;
+            background: white;
+            color: #4b5365;
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 10;
+            background: rgba(12, 18, 32, 0.44);
+            display: grid;
+            place-items: center;
+        }
+
+        .modal-backdrop[hidden] {
+            display: none;
+        }
+
+        .modal {
+            width: 390px;
+            padding: 24px;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 24px 65px rgba(11, 17, 31, 0.26);
+        }
+
+        .modal-icon {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            display: grid;
+            place-items: center;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .modal h2 {
+            margin: 0 0 8px;
+            font-size: 19px;
+        }
+
+        .modal p {
+            margin: 0 0 22px;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .toast {
+            position: fixed;
+            right: 30px;
+            bottom: 28px;
+            z-index: 20;
+            min-width: 250px;
+            padding: 14px 17px;
+            border-radius: 12px;
+            background: #163f35;
+            color: white;
+            box-shadow: 0 15px 35px rgba(15, 58, 47, 0.25);
+            font-size: 14px;
+            font-weight: 650;
+        }
+
+        .toast[hidden] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-mark" aria-hidden="true"></span>
+                Northstar
+            </div>
+            <p class="nav-label">Workspace</p>
+            <nav aria-label="Settings sections">
+                <button class="nav-item active" data-section="general" data-testid="nav-general">
+                    <span class="nav-icon" aria-hidden="true">●</span>General
+                </button>
+                <button class="nav-item" data-section="appearance" data-testid="nav-appearance">
+                    <span class="nav-icon" aria-hidden="true">◐</span>Appearance
+                </button>
+                <button class="nav-item" data-section="notifications" data-testid="nav-notifications">
+                    <span class="nav-icon" aria-hidden="true">◇</span>Notifications
+                </button>
+                <button class="nav-item" data-section="privacy" data-testid="nav-privacy">
+                    <span class="nav-icon" aria-hidden="true">◆</span>Privacy
+                </button>
+            </nav>
+            <div class="workspace-badge">
+                <strong>Design Lab</strong>
+                <span>Personal workspace</span>
+            </div>
+        </aside>
+
+        <main class="main-panel">
+            <header class="topbar">
+                <div class="title-block">
+                    <h1 id="page-title">General</h1>
+                    <p>Manage your workspace preferences</p>
+                </div>
+                <div class="profile-chip">
+                    <span class="avatar">EL</span>
+                    Elaina
+                </div>
+            </header>
+
+            <div class="content">
+                <section class="section active" data-panel="general">
+                    <div class="section-heading">
+                        <h2>General preferences</h2>
+                        <p>Choose how Northstar behaves across your workspace.</p>
+                    </div>
+                    <div class="settings-card">
+                        <div class="setting-row">
+                            <div class="setting-copy">
+                                <strong>Language</strong>
+                                <span>Language used in menus and notifications</span>
+                            </div>
+                            <select class="select-control" aria-label="Language">
+                                <option>English</option>
+                                <option>French</option>
+                                <option>Chinese</option>
+                            </select>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-copy">
+                                <strong>Start page</strong>
+                                <span>First page shown when the app opens</span>
+                            </div>
+                            <select class="select-control" aria-label="Start page">
+                                <option>Overview</option>
+                                <option>Recent files</option>
+                                <option>Activity</option>
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section" data-panel="appearance">
+                    <div class="section-heading">
+                        <h2>Appearance</h2>
+                        <p>Adjust the visual style and information density.</p>
+                    </div>
+                    <div class="settings-card">
+                        <div class="setting-row">
+                            <div class="setting-copy">
+                                <strong>Theme</strong>
+                                <span>Choose the workspace color mode</span>
+                            </div>
+                            <div class="segmented" data-control="theme">
+                                <button class="segment" data-value="light">Light</button>
+                                <button class="segment" data-value="dark">Dark</button>
+                                <button class="segment" data-value="system">System</button>
+                            </div>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-copy">
+                                <strong>Interface density</strong>
+                                <span>Control spacing between interface elements</span>
+                            </div>
+                            <div class="segmented" data-control="density">
+                                <button class="segment" data-value="compact" data-testid="density-compact">Compact</button>
+                                <button class="segment" data-value="comfortable">Comfortable</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section" data-panel="notifications">
+                    <div class="section-heading">
+                        <h2>Notifications</h2>
+                        <p>Control when and how Northstar gets your attention.</p>
+                    </div>
+                    <div class="settings-card">
+                        <div class="setting-row">
+                            <div class="setting-copy">
+                                <strong>Push notifications</strong>
+                                <span>Show important updates on this device</span>
+                            </div>
+                            <button class="switch" data-key="push_notifications" role="switch" aria-label="Push notifications"></button>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-copy">
+                                <strong>Sound alerts</strong>
+                                <span>Play a sound for new activity</span>
+                            </div>
+                            <button class="switch" data-key="sound_alerts" data-testid="sound-alerts" role="switch" aria-label="Sound alerts"></button>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-copy">
+                                <strong>Weekly summary</strong>
+                                <span>Receive a weekly workspace digest</span>
+                            </div>
+                            <button class="switch" data-key="weekly_summary" role="switch" aria-label="Weekly summary"></button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section" data-panel="privacy">
+                    <div class="section-heading">
+                        <h2>Privacy</h2>
+                        <p>Manage diagnostic data and workspace history.</p>
+                    </div>
+                    <div class="settings-card">
+                        <div class="setting-row">
+                            <div class="setting-copy">
+                                <strong>Analytics sharing</strong>
+                                <span>Help improve Northstar with anonymous usage data</span>
+                            </div>
+                            <button class="switch" data-key="analytics_sharing" data-testid="analytics-sharing" role="switch" aria-label="Analytics sharing"></button>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-copy">
+                                <strong>Crash reports</strong>
+                                <span>Send diagnostic reports after unexpected errors</span>
+                            </div>
+                            <button class="switch" data-key="crash_reports" role="switch" aria-label="Crash reports"></button>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-copy">
+                                <strong>Activity history</strong>
+                                <span>Keep a local history of recent actions</span>
+                            </div>
+                            <button class="switch" data-key="activity_history" role="switch" aria-label="Activity history"></button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <footer class="footer">
+                <span id="save-status" class="save-status">All changes saved</span>
+                <button id="save-button" class="primary-button" data-testid="save-changes" disabled>
+                    Save changes
+                </button>
+            </footer>
+        </main>
+    </div>
+
+    <div id="confirm-modal" class="modal-backdrop" hidden>
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+            <div class="modal-icon" aria-hidden="true">✓</div>
+            <h2 id="confirm-title">Apply these changes?</h2>
+            <p>Your updated preferences will take effect immediately across this workspace.</p>
+            <div class="modal-actions">
+                <button id="cancel-button" class="secondary-button" data-testid="confirm-cancel">Cancel</button>
+                <button id="apply-button" class="primary-button" data-testid="confirm-apply">Apply changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast" role="status" hidden>Changes saved successfully</div>
+
+    <script>
+        const DEFAULT_SETTINGS = {
+            theme: "system",
+            density: "comfortable",
+            push_notifications: true,
+            sound_alerts: true,
+            weekly_summary: false,
+            analytics_sharing: true,
+            crash_reports: true,
+            activity_history: true
+        };
+
+        let draft = { ...DEFAULT_SETTINGS };
+        let saved = { ...DEFAULT_SETTINGS };
+        let activeSection = "general";
+        let toastVisible = false;
+
+        const title = document.querySelector("#page-title");
+        const saveButton = document.querySelector("#save-button");
+        const saveStatus = document.querySelector("#save-status");
+        const modal = document.querySelector("#confirm-modal");
+        const toast = document.querySelector("#toast");
+
+        function equalSettings(first, second) {
+            return JSON.stringify(first) === JSON.stringify(second);
+        }
+
+        function render() {
+            document.querySelectorAll(".nav-item").forEach(button => {
+                button.classList.toggle("active", button.dataset.section === activeSection);
+            });
+
+            document.querySelectorAll(".section").forEach(section => {
+                section.classList.toggle("active", section.dataset.panel === activeSection);
+            });
+
+            title.textContent = activeSection[0].toUpperCase() + activeSection.slice(1);
+
+            document.querySelectorAll(".switch").forEach(button => {
+                button.setAttribute("aria-checked", String(Boolean(draft[button.dataset.key])));
+            });
+
+            document.querySelectorAll(".segmented").forEach(group => {
+                const key = group.dataset.control;
+                group.querySelectorAll(".segment").forEach(button => {
+                    button.classList.toggle("active", draft[key] === button.dataset.value);
+                });
+            });
+
+            const hasChanges = !equalSettings(draft, saved);
+            saveButton.disabled = !hasChanges;
+            saveStatus.textContent = hasChanges ? "Unsaved changes" : "All changes saved";
+            saveStatus.classList.toggle("unsaved", hasChanges);
+        }
+
+        document.querySelectorAll(".nav-item").forEach(button => {
+            button.addEventListener("click", () => {
+                activeSection = button.dataset.section;
+                render();
+            });
+        });
+
+        document.querySelectorAll(".switch").forEach(button => {
+            button.addEventListener("click", () => {
+                const key = button.dataset.key;
+                draft[key] = !draft[key];
+                render();
+            });
+        });
+
+        document.querySelectorAll(".segment").forEach(button => {
+            button.addEventListener("click", () => {
+                const key = button.closest(".segmented").dataset.control;
+                draft[key] = button.dataset.value;
+                render();
+            });
+        });
+
+        saveButton.addEventListener("click", () => {
+            modal.hidden = false;
+        });
+
+        document.querySelector("#cancel-button").addEventListener("click", () => {
+            modal.hidden = true;
+        });
+
+        document.querySelector("#apply-button").addEventListener("click", () => {
+            saved = { ...draft };
+            modal.hidden = true;
+            toastVisible = true;
+            toast.hidden = false;
+            render();
+        });
+
+        window.resetSettingsTask = function (initialState) {
+            draft = { ...DEFAULT_SETTINGS, ...initialState };
+            saved = { ...draft };
+            activeSection = "general";
+            toastVisible = false;
+            toast.hidden = true;
+            modal.hidden = true;
+            render();
+        };
+
+        // Evaluator-only interface. Never include this state in Agent input.
+        window.getSettingsEvaluationState = function () {
+            return {
+                active_section: activeSection,
+                draft: { ...draft },
+                saved: { ...saved },
+                has_unapplied_changes: !equalSettings(draft, saved),
+                confirmation_visible: !modal.hidden,
+                toast_visible: toastVisible
+            };
+        };
+
+        render();
+    </script>
+</body>
+
+</html>

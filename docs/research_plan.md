@@ -44,6 +44,7 @@ packaged reproducibly.
 - [ ] Document the Colab environment and exact inference configuration.
 - [ ] Add paired failure examples and uncertainty estimates.
 - [ ] Validate deterministic click-failure injection locally.
+- [ ] Validate the multi-step Settings App task families locally.
 - [ ] Connect the VLM agent and begin Part B controlled comparisons.
 
 ## Interpretation boundary

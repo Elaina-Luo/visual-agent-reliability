@@ -77,13 +77,17 @@ Regenerate the result figures:
 
 ## Part B — Controlled agent reliability
 
-The repository also contains a deterministic six-card browser environment.
-It supports screenshots, real clicks, selection-state changes, submission, and
-automated scoring. Its executor can deterministically drop the first valid card
-click while keeping the fault flag hidden from the Agent. Scripted checks verify
-that the dropped click leaves page state unchanged and that a repeated click can
-recover. The next study will compare reactive behavior, explicit verification,
-and bounded retry under this controlled failure.
+The primary Part B environment is a realistic, click-only Settings App with
+Appearance, Notifications, and Privacy task families. Each task requires four
+visible interactions: navigate to a section, change one setting, save, and
+confirm. Hidden evaluator state checks the saved value and is never provided to
+the Agent.
+
+The original six-card environment remains as a small regression test. Its
+executor can deterministically drop the first valid card click while keeping
+the fault flag hidden from the Agent. The next implementation step will connect
+the same failure mechanism to the Settings App, then compare reactive behavior,
+explicit verification, and bounded retry.
 
 Start the environment:
 
@@ -97,10 +101,19 @@ Run the scripted action/scoring check:
 .\.venv\Scripts\python.exe run_scripted.py
 ```
 
+Run the multi-step Settings App check:
+
+```powershell
+.\.venv\Scripts\python.exe run_settings_scripted.py
+```
+
+See the [Settings App task specification](docs/settings_task_spec.md) for the
+observation, action, success, and hidden-information contract.
+
 ## Repository structure
 
 ```text
-environment/   Controlled browser task for Part B
+environment/   Simple regression task and realistic Settings App for Part B
 experiments/   Colab VLM inference notebook
 results/       Frozen manifest, predictions, tables, and figures
 src/           Dataset inspection, evaluation, sanity checks, and plotting
