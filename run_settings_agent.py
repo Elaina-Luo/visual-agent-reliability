@@ -8,6 +8,7 @@ from playwright.sync_api import sync_playwright
 
 from environment.settings_tasks import generate_settings_task
 from src.action_parser import parse_agent_action
+from src.episode_evaluator import evaluate_episode
 from src.qwen_settings_agent import DEFAULT_MODEL_ID, QwenSettingsAgent
 from src.settings_executor import (
     FAULT_NONE,
@@ -20,15 +21,6 @@ from src.settings_executor import (
 
 PROJECT_DIR = Path(__file__).resolve().parent
 VIEWPORT = {"width": 980, "height": 644}
-
-
-def evaluate_episode(state, task, termination_reason):
-    return (
-        termination_reason == "agent_finish"
-        and state["saved"][task["target_key"]] == task["target_value"]
-        and state["has_unapplied_changes"] is False
-        and state["confirmation_visible"] is False
-    )
 
 
 def screenshot_image(screenshot_bytes):
@@ -144,17 +136,18 @@ def run_episode(
     final_state = page.evaluate(
         "() => window.getSettingsEvaluationState()"
     )
+    evaluation = evaluate_episode(
+        final_state,
+        task,
+        termination_reason,
+    )
     result = {
         "model_id": agent.model_id,
         "strategy": "reactive",
         "fault_mode": fault_mode,
         "fault_triggered": fault_state["triggered"],
         "task": task,
-        "success": evaluate_episode(
-            final_state,
-            task,
-            termination_reason,
-        ),
+        **evaluation,
         "termination_reason": termination_reason,
         "steps": len(trace),
         "final_state": final_state,
@@ -205,6 +198,11 @@ def main():
         browser.close()
 
     print("Success:", result["success"])
+    print("Task state success:", result["task_state_success"])
+    print(
+        "Agent terminated correctly:",
+        result["agent_terminated_correctly"],
+    )
     print("Steps:", result["steps"])
     print("Termination:", result["termination_reason"])
     print("Fault triggered:", result["fault_triggered"])
