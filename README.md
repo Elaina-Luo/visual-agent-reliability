@@ -83,11 +83,13 @@ visible interactions: navigate to a section, change one setting, save, and
 confirm. Hidden evaluator state checks the saved value and is never provided to
 the Agent.
 
-The original six-card environment remains as a small regression test. Its
-executor can deterministically drop the first valid card click while keeping
-the fault flag hidden from the Agent. The next implementation step will connect
-the same failure mechanism to the Settings App, then compare reactive behavior,
-explicit verification, and bounded retry.
+The original six-card environment remains as a small regression test. Both
+environments now support deterministic dropped-click faults with evaluator-only
+audit state. The Settings App drops the first click that would change a setting
+while leaving navigation and submission actions unaffected. Scripted checks
+compare no retry against one repeated setting click; they validate the fault
+mechanism, not autonomous Agent recovery. The next implementation step is the
+Qwen observation–action loop.
 
 Start the environment:
 
