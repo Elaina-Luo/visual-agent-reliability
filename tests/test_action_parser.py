@@ -23,6 +23,23 @@ class ParseAgentActionTests(unittest.TestCase):
             {"type": "finish"},
         )
 
+    def test_normalizes_qwen_coordinate_pair(self):
+        self.assertEqual(
+            self.parse('{"type": "click", "x": [878, 298]}'),
+            {"type": "click", "x": 878, "y": 298},
+        )
+
+    def test_rejects_multiple_actions(self):
+        with self.assertRaises(ValueError):
+            self.parse(
+                '{"type": "click", "x": [878, 298]}; '
+                '{"type": "finish"}'
+            )
+
+    def test_rejects_malformed_qwen_coordinate_pair(self):
+        with self.assertRaises(ValueError):
+            self.parse('{"type": "click", "x": [878]}')
+
     def test_rejects_out_of_bounds_click(self):
         with self.assertRaises(ValueError):
             self.parse('{"type": "click", "x": 980, "y": 100}')
