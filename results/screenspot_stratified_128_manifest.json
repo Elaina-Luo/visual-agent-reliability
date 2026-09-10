@@ -1,0 +1,1166 @@
+{
+  "dataset": "bevaya/ScreenSpot",
+  "split": "test",
+  "sampling_seed": 42,
+  "samples_per_stratum": 16,
+  "size_thresholds": {
+    "q25": 0.003314728913483798,
+    "q50": 0.0072894705406725485,
+    "q75": 0.02119118712584119
+  },
+  "sample_count": 128,
+  "selected_samples": [
+    {
+      "index": 12,
+      "file_name": "pc_e618dc7e-8ffb-4a37-a317-9d3908c38395.png",
+      "instruction": "input method toolbar",
+      "data_type": "icon",
+      "data_source": "windows",
+      "target_area_ratio": 0.005262345679012345,
+      "size_group": "medium"
+    },
+    {
+      "index": 26,
+      "file_name": "pc_1f371830-d909-41ac-a340-921a594f05b0.png",
+      "instruction": "undo",
+      "data_type": "icon",
+      "data_source": "windows",
+      "target_area_ratio": 0.0018518518518518517,
+      "size_group": "small"
+    },
+    {
+      "index": 53,
+      "file_name": "pc_155fc26b-cddb-4a03-b636-322a45c054e6.png",
+      "instruction": "open settings",
+      "data_type": "icon",
+      "data_source": "windows",
+      "target_area_ratio": 0.0035667438271604944,
+      "size_group": "medium"
+    },
+    {
+      "index": 63,
+      "file_name": "pc_445877f4-ba58-468b-97b6-e770b1a9f02a.png",
+      "instruction": "open the file",
+      "data_type": "text",
+      "data_source": "windows",
+      "target_area_ratio": 0.015231481481481481,
+      "size_group": "large"
+    },
+    {
+      "index": 83,
+      "file_name": "pc_5a8a71e4-4c80-4b17-b724-a6b6d48a339f.png",
+      "instruction": "check weather forecast",
+      "data_type": "icon",
+      "data_source": "windows",
+      "target_area_ratio": 0.009728009259259266,
+      "size_group": "large"
+    },
+    {
+      "index": 84,
+      "file_name": "pc_986f4ae9-9dd8-4c5c-b3d8-fb3fb5557d17.png",
+      "instruction": "multiplicate",
+      "data_type": "icon",
+      "data_source": "windows",
+      "target_area_ratio": 0.008749999999999999,
+      "size_group": "large"
+    },
+    {
+      "index": 86,
+      "file_name": "pc_89fc8216-3292-418c-864f-edcce3c34dc5.png",
+      "instruction": "adjust volume",
+      "data_type": "icon",
+      "data_source": "windows",
+      "target_area_ratio": 0.0031597222222222304,
+      "size_group": "small"
+    },
+    {
+      "index": 89,
+      "file_name": "pc_79eaf625-93f5-42a4-977e-71aba5418ff4.png",
+      "instruction": "go to the desktop",
+      "data_type": "text",
+      "data_source": "windows",
+      "target_area_ratio": 0.008587962962962957,
+      "size_group": "large"
+    },
+    {
+      "index": 90,
+      "file_name": "pc_1f3eb0eb-2ab2-4e48-b278-de334846ee0d.png",
+      "instruction": "choose the pig",
+      "data_type": "icon",
+      "data_source": "windows",
+      "target_area_ratio": 0.19703125000000002,
+      "size_group": "very_large"
+    },
+    {
+      "index": 91,
+      "file_name": "pc_6a8d5384-ca12-4ae2-b14c-4c9dc08d4896.png",
+      "instruction": "input a url",
+      "data_type": "icon",
+      "data_source": "windows",
+      "target_area_ratio": 0.026179108796296285,
+      "size_group": "very_large"
+    },
+    {
+      "index": 93,
+      "file_name": "pc_e18b4420-34da-4d60-889e-924a76fb5094.png",
+      "instruction": "open the favourites",
+      "data_type": "icon",
+      "data_source": "windows",
+      "target_area_ratio": 0.0029976851851851822,
+      "size_group": "small"
+    },
+    {
+      "index": 101,
+      "file_name": "pc_977de16a-870e-48f3-8a38-ec9e1efb9f77.png",
+      "instruction": "add a language",
+      "data_type": "text",
+      "data_source": "windows",
+      "target_area_ratio": 0.015528549382716045,
+      "size_group": "large"
+    },
+    {
+      "index": 118,
+      "file_name": "pc_17b94559-9897-4b8e-ae34-c47ce5b5d46f.png",
+      "instruction": "back to",
+      "data_type": "icon",
+      "data_source": "windows",
+      "target_area_ratio": 0.0011094154192507928,
+      "size_group": "small"
+    },
+    {
+      "index": 121,
+      "file_name": "pc_5377c04c-7d8f-4377-b1ed-d7994722871f.png",
+      "instruction": "check email and account",
+      "data_type": "text",
+      "data_source": "windows",
+      "target_area_ratio": 0.03407344495672569,
+      "size_group": "very_large"
+    },
+    {
+      "index": 145,
+      "file_name": "pc_050e2feb-60bf-401e-b6b0-28c0fe490347.png",
+      "instruction": "3d shapes item",
+      "data_type": "text",
+      "data_source": "windows",
+      "target_area_ratio": 0.003426481680745571,
+      "size_group": "medium"
+    },
+    {
+      "index": 157,
+      "file_name": "pc_5df0bc8e-3005-4a32-b824-0318d6a05bdd.png",
+      "instruction": "report a problem",
+      "data_type": "text",
+      "data_source": "windows",
+      "target_area_ratio": 0.014758636841884139,
+      "size_group": "large"
+    },
+    {
+      "index": 162,
+      "file_name": "pc_6f79b56c-2b0f-471d-9f9d-93932c69a0ce.png",
+      "instruction": "check my apple id",
+      "data_type": "text",
+      "data_source": "macos",
+      "target_area_ratio": 0.0072477605912346504,
+      "size_group": "medium"
+    },
+    {
+      "index": 191,
+      "file_name": "pc_33eb9249-4ee4-4752-9541-8466efda3845.png",
+      "instruction": "switch to device",
+      "data_type": "text",
+      "data_source": "macos",
+      "target_area_ratio": 0.0024974891552877326,
+      "size_group": "small"
+    },
+    {
+      "index": 198,
+      "file_name": "pc_64100146-b681-4263-b86c-16d6932b8078.png",
+      "instruction": "trash",
+      "data_type": "icon",
+      "data_source": "macos",
+      "target_area_ratio": 0.0011744132479875858,
+      "size_group": "small"
+    },
+    {
+      "index": 202,
+      "file_name": "pc_e2bd639a-f297-48fd-bee0-3b7044b0ad57.png",
+      "instruction": "adjust voice",
+      "data_type": "icon",
+      "data_source": "macos",
+      "target_area_ratio": 0.15538166719897792,
+      "size_group": "very_large"
+    },
+    {
+      "index": 203,
+      "file_name": "pc_e2bd639a-f297-48fd-bee0-3b7044b0ad57.png",
+      "instruction": "use the screen mirroring",
+      "data_type": "text",
+      "data_source": "macos",
+      "target_area_ratio": 0.03521017424323077,
+      "size_group": "very_large"
+    },
+    {
+      "index": 218,
+      "file_name": "pc_2773ea59-8493-4c89-957a-d2ec661e6384.png",
+      "instruction": "select network",
+      "data_type": "icon",
+      "data_source": "macos",
+      "target_area_ratio": 0.012064706662498448,
+      "size_group": "large"
+    },
+    {
+      "index": 231,
+      "file_name": "pc_514bf9d5-ca63-4d33-94cb-dc1b11994199.png",
+      "instruction": "switch to alerts mode",
+      "data_type": "text",
+      "data_source": "macos",
+      "target_area_ratio": 0.020299154098954775,
+      "size_group": "large"
+    },
+    {
+      "index": 235,
+      "file_name": "pc_b93bf9fd-afa5-40c0-b103-48f235f3ffe0.png",
+      "instruction": "change user's password",
+      "data_type": "text",
+      "data_source": "macos",
+      "target_area_ratio": 0.009921114422873235,
+      "size_group": "large"
+    },
+    {
+      "index": 247,
+      "file_name": "pc_1e16b18c-5d91-4155-9e49-4ad5d9453fc7.png",
+      "instruction": "search in emails",
+      "data_type": "icon",
+      "data_source": "macos",
+      "target_area_ratio": 0.007991998769041388,
+      "size_group": "large"
+    },
+    {
+      "index": 272,
+      "file_name": "pc_f01bc231-56c4-4aba-9dd4-fd6271be0f8e.png",
+      "instruction": "show the files in list",
+      "data_type": "text",
+      "data_source": "macos",
+      "target_area_ratio": 0.008251670378619153,
+      "size_group": "large"
+    },
+    {
+      "index": 285,
+      "file_name": "pc_3f805781-f2fe-45dc-8bc5-e62d12f1c359.png",
+      "instruction": "add a sunburst chart",
+      "data_type": "icon",
+      "data_source": "macos",
+      "target_area_ratio": 0.017745047256566733,
+      "size_group": "large"
+    },
+    {
+      "index": 291,
+      "file_name": "pc_71e8f8bd-7ff0-4846-ada6-ce337a0f5ebc.png",
+      "instruction": "switch to design",
+      "data_type": "text",
+      "data_source": "macos",
+      "target_area_ratio": 0.0020735304351549985,
+      "size_group": "small"
+    },
+    {
+      "index": 292,
+      "file_name": "pc_71e8f8bd-7ff0-4846-ada6-ce337a0f5ebc.png",
+      "instruction": "go back to home",
+      "data_type": "icon",
+      "data_source": "macos",
+      "target_area_ratio": 0.0010286017119272833,
+      "size_group": "small"
+    },
+    {
+      "index": 294,
+      "file_name": "pc_b113f651-ec99-4a84-8c15-ff0fc1aee615.png",
+      "instruction": "choose the 1), 2), 3) â¦",
+      "data_type": "text",
+      "data_source": "macos",
+      "target_area_ratio": 0.008720761178599129,
+      "size_group": "large"
+    },
+    {
+      "index": 303,
+      "file_name": "pc_45480159-6b1b-4528-9109-dab1905c62b7.png",
+      "instruction": "ok",
+      "data_type": "text",
+      "data_source": "macos",
+      "target_area_ratio": 0.0030168355300659432,
+      "size_group": "small"
+    },
+    {
+      "index": 319,
+      "file_name": "pc_c69e46cd-d2a9-4dbf-8d0a-4532b750a691.png",
+      "instruction": "start record",
+      "data_type": "icon",
+      "data_source": "macos",
+      "target_area_ratio": 0.006878817230067835,
+      "size_group": "medium"
+    },
+    {
+      "index": 326,
+      "file_name": "pc_2c2b6cbd-39cf-4bd2-80aa-d953890c21e5.png",
+      "instruction": "switch to apps",
+      "data_type": "text",
+      "data_source": "macos",
+      "target_area_ratio": 0.004574078388733567,
+      "size_group": "medium"
+    },
+    {
+      "index": 329,
+      "file_name": "pc_64c386c3-9d87-4c91-b712-c1d9ab9216ae.png",
+      "instruction": "share the shortcut",
+      "data_type": "icon",
+      "data_source": "macos",
+      "target_area_ratio": 0.0025913093340590144,
+      "size_group": "small"
+    },
+    {
+      "index": 334,
+      "file_name": "mobile_1ca5b944-293a-46a1-af95-eb35bc8a0b2a.png",
+      "instruction": "check the weather",
+      "data_type": "icon",
+      "data_source": "ios",
+      "target_area_ratio": 0.09208169698222406,
+      "size_group": "very_large"
+    },
+    {
+      "index": 337,
+      "file_name": "mobile_1ca5b944-293a-46a1-af95-eb35bc8a0b2a.png",
+      "instruction": "open the camera",
+      "data_type": "text",
+      "data_source": "ios",
+      "target_area_ratio": 0.00514675485737909,
+      "size_group": "medium"
+    },
+    {
+      "index": 340,
+      "file_name": "mobile_6949b916-64c8-431f-8842-a29a9a557641.png",
+      "instruction": "close the translation",
+      "data_type": "icon",
+      "data_source": "ios",
+      "target_area_ratio": 0.002454526663910707,
+      "size_group": "small"
+    },
+    {
+      "index": 366,
+      "file_name": "mobile_1a514eae-4ee0-4780-a059-c47715828e3b.png",
+      "instruction": "flight mode",
+      "data_type": "icon",
+      "data_source": "ios",
+      "target_area_ratio": 0.009986362592997663,
+      "size_group": "large"
+    },
+    {
+      "index": 369,
+      "file_name": "mobile_1a514eae-4ee0-4780-a059-c47715828e3b.png",
+      "instruction": "focus mode",
+      "data_type": "text",
+      "data_source": "ios",
+      "target_area_ratio": 0.036057101578428605,
+      "size_group": "very_large"
+    },
+    {
+      "index": 370,
+      "file_name": "mobile_93dec21b-d612-41df-9f76-933ceadaba66.png",
+      "instruction": "photos app",
+      "data_type": "text",
+      "data_source": "ios",
+      "target_area_ratio": 0.015566897557418883,
+      "size_group": "large"
+    },
+    {
+      "index": 371,
+      "file_name": "mobile_93dec21b-d612-41df-9f76-933ceadaba66.png",
+      "instruction": "clock",
+      "data_type": "text",
+      "data_source": "ios",
+      "target_area_ratio": 0.01619273301737757,
+      "size_group": "large"
+    },
+    {
+      "index": 379,
+      "file_name": "mobile_9b66c296-5f43-4312-b933-4dfabf00247c.png",
+      "instruction": "back to settings",
+      "data_type": "text",
+      "data_source": "ios",
+      "target_area_ratio": 0.010152441905996408,
+      "size_group": "large"
+    },
+    {
+      "index": 383,
+      "file_name": "mobile_5c9fb5f1-7d84-4283-8ba4-7821a9545c95.png",
+      "instruction": "choose the pjlab-guest",
+      "data_type": "text",
+      "data_source": "ios",
+      "target_area_ratio": 0.05276393783502788,
+      "size_group": "very_large"
+    },
+    {
+      "index": 388,
+      "file_name": "mobile_8e7e6de4-2eac-400c-b845-291fa80c5c7c.png",
+      "instruction": "check airdrop setting",
+      "data_type": "text",
+      "data_source": "ios",
+      "target_area_ratio": 0.04713006845708269,
+      "size_group": "very_large"
+    },
+    {
+      "index": 427,
+      "file_name": "mobile_8da8fbf4-c2b0-495f-88d3-9eb682c15ce7.png",
+      "instruction": "more information",
+      "data_type": "icon",
+      "data_source": "ios",
+      "target_area_ratio": 0.002496590648249419,
+      "size_group": "small"
+    },
+    {
+      "index": 432,
+      "file_name": "mobile_efa861a6-0810-4c8a-9bca-4f481641d03d.png",
+      "instruction": "add a new one",
+      "data_type": "icon",
+      "data_source": "ios",
+      "target_area_ratio": 0.0019173384102294056,
+      "size_group": "small"
+    },
+    {
+      "index": 450,
+      "file_name": "mobile_d8a4069b-ec35-4a62-a3cd-5b5e7d95b50c.png",
+      "instruction": "search",
+      "data_type": "icon",
+      "data_source": "ios",
+      "target_area_ratio": 0.0023696682464454974,
+      "size_group": "small"
+    },
+    {
+      "index": 452,
+      "file_name": "mobile_d8a4069b-ec35-4a62-a3cd-5b5e7d95b50c.png",
+      "instruction": "view docs",
+      "data_type": "text",
+      "data_source": "ios",
+      "target_area_ratio": 0.0060058600342960495,
+      "size_group": "medium"
+    },
+    {
+      "index": 457,
+      "file_name": "mobile_20aa1fbd-f09f-4923-9fb4-15998cda6fe3.png",
+      "instruction": "add description",
+      "data_type": "text",
+      "data_source": "ios",
+      "target_area_ratio": 0.043620799071036026,
+      "size_group": "very_large"
+    },
+    {
+      "index": 458,
+      "file_name": "mobile_a14fb632-fab9-4537-8c7b-8c650fd91bd7.png",
+      "instruction": "favorite the music",
+      "data_type": "icon",
+      "data_source": "ios",
+      "target_area_ratio": 0.004571231822416663,
+      "size_group": "medium"
+    },
+    {
+      "index": 466,
+      "file_name": "mobile_9bd1779a-91ee-4a59-8904-3850434b1421.png",
+      "instruction": "write a message",
+      "data_type": "icon",
+      "data_source": "ios",
+      "target_area_ratio": 0.004700179581696168,
+      "size_group": "medium"
+    },
+    {
+      "index": 470,
+      "file_name": "mobile_8d5dea76-69b8-4076-82ef-38b2fb8a1b30.png",
+      "instruction": "customize focus time",
+      "data_type": "icon",
+      "data_source": "android",
+      "target_area_ratio": 0.021086419753086425,
+      "size_group": "large"
+    },
+    {
+      "index": 471,
+      "file_name": "mobile_b012267b-fcd6-4d0c-991a-f2a4afd0a2ff.png",
+      "instruction": "check tuesday data details",
+      "data_type": "icon",
+      "data_source": "android",
+      "target_area_ratio": 0.01759027777777778,
+      "size_group": "large"
+    },
+    {
+      "index": 479,
+      "file_name": "mobile_db3c83d0-b179-4661-88d4-baf938bcf477.png",
+      "instruction": "return previous page",
+      "data_type": "icon",
+      "data_source": "android",
+      "target_area_ratio": 0.003607253086419753,
+      "size_group": "medium"
+    },
+    {
+      "index": 481,
+      "file_name": "mobile_06d5a5b9-8dda-439a-84a5-7af28ab2dab8.png",
+      "instruction": "turn off mute ringer",
+      "data_type": "icon",
+      "data_source": "android",
+      "target_area_ratio": 0.010682870370370377,
+      "size_group": "large"
+    },
+    {
+      "index": 492,
+      "file_name": "mobile_550b9efc-c475-4188-82b6-47f7ca1a56f7.png",
+      "instruction": "search recodings",
+      "data_type": "text",
+      "data_source": "android",
+      "target_area_ratio": 0.054750000000000014,
+      "size_group": "very_large"
+    },
+    {
+      "index": 500,
+      "file_name": "mobile_ef01fd08-a7fd-42a3-b1aa-fe22b3f79730.png",
+      "instruction": "display user agreement",
+      "data_type": "text",
+      "data_source": "android",
+      "target_area_ratio": 0.013986111111111118,
+      "size_group": "large"
+    },
+    {
+      "index": 504,
+      "file_name": "mobile_7bbecc1d-4220-4287-8ec7-14f9eec203e2.png",
+      "instruction": "sort by size",
+      "data_type": "text",
+      "data_source": "android",
+      "target_area_ratio": 0.02294444444444446,
+      "size_group": "very_large"
+    },
+    {
+      "index": 513,
+      "file_name": "mobile_275415f1-ade1-4210-9e92-8f998a671c96.png",
+      "instruction": "show more file types",
+      "data_type": "text",
+      "data_source": "android",
+      "target_area_ratio": 0.006970293209876544,
+      "size_group": "medium"
+    },
+    {
+      "index": 519,
+      "file_name": "mobile_4fafbd92-0af2-4b02-9cf8-952227fd9993.png",
+      "instruction": "open clock at 3",
+      "data_type": "icon",
+      "data_source": "android",
+      "target_area_ratio": 0.013155864197530863,
+      "size_group": "large"
+    },
+    {
+      "index": 532,
+      "file_name": "mobile_165687dd-c6c2-4f44-a84d-3e9a2af95ffe.png",
+      "instruction": "options",
+      "data_type": "icon",
+      "data_source": "android",
+      "target_area_ratio": 0.00464351851851852,
+      "size_group": "medium"
+    },
+    {
+      "index": 539,
+      "file_name": "mobile_0dcb6532-d25e-4bb0-8746-ccdbec623bce.png",
+      "instruction": "open account profile",
+      "data_type": "icon",
+      "data_source": "android",
+      "target_area_ratio": 0.098875,
+      "size_group": "very_large"
+    },
+    {
+      "index": 550,
+      "file_name": "mobile_f61ea850-a79c-41b8-891f-8c55326e1530.png",
+      "instruction": "set date and time",
+      "data_type": "text",
+      "data_source": "android",
+      "target_area_ratio": 0.07349652777777782,
+      "size_group": "very_large"
+    },
+    {
+      "index": 565,
+      "file_name": "mobile_9aa2c4bf-aa52-43ed-ac30-f22798c14668.png",
+      "instruction": "open instagram",
+      "data_type": "text",
+      "data_source": "android",
+      "target_area_ratio": 0.02821296296296296,
+      "size_group": "very_large"
+    },
+    {
+      "index": 578,
+      "file_name": "mobile_f515dd3d-41eb-4fe9-b74a-ac66e60a8b75.png",
+      "instruction": "cancel",
+      "data_type": "text",
+      "data_source": "android",
+      "target_area_ratio": 0.030146990740740755,
+      "size_group": "very_large"
+    },
+    {
+      "index": 579,
+      "file_name": "mobile_63949247-1001-4d4e-9f49-81c85f7308e8.png",
+      "instruction": "power on",
+      "data_type": "icon",
+      "data_source": "android",
+      "target_area_ratio": 0.07942708333333329,
+      "size_group": "very_large"
+    },
+    {
+      "index": 581,
+      "file_name": "mobile_63949247-1001-4d4e-9f49-81c85f7308e8.png",
+      "instruction": "raise air conditioner temperature",
+      "data_type": "icon",
+      "data_source": "android",
+      "target_area_ratio": 0.038786265432098746,
+      "size_group": "very_large"
+    },
+    {
+      "index": 587,
+      "file_name": "mobile_182c66dd-3836-4bce-909f-166abd570fde.png",
+      "instruction": "turn off bluetooth",
+      "data_type": "text",
+      "data_source": "android",
+      "target_area_ratio": 0.046480709876543236,
+      "size_group": "very_large"
+    },
+    {
+      "index": 606,
+      "file_name": "mobile_f859f69e-20c1-4630-9435-e959c43590d5.png",
+      "instruction": "refresh the page",
+      "data_type": "icon",
+      "data_source": "ios",
+      "target_area_ratio": 0.0022827097974369567,
+      "size_group": "small"
+    },
+    {
+      "index": 609,
+      "file_name": "mobile_41aa1b5c-01f3-455d-807e-9c90c705dd1f.png",
+      "instruction": "open downloads page",
+      "data_type": "text",
+      "data_source": "ios",
+      "target_area_ratio": 0.006273770152955765,
+      "size_group": "medium"
+    },
+    {
+      "index": 618,
+      "file_name": "mobile_043c3a5e-c12c-4991-bb7f-676c617b2f9b.png",
+      "instruction": "open the entertainment",
+      "data_type": "text",
+      "data_source": "ios",
+      "target_area_ratio": 0.02845597354278628,
+      "size_group": "very_large"
+    },
+    {
+      "index": 650,
+      "file_name": "mobile_c81bb812-68b7-4557-95bb-1260f3b787f1.png",
+      "instruction": "add waypoints",
+      "data_type": "icon",
+      "data_source": "ios",
+      "target_area_ratio": 0.0062887349617207445,
+      "size_group": "medium"
+    },
+    {
+      "index": 680,
+      "file_name": "mobile_bed2b5e8-9102-405e-80f3-85207ed1bbf0.png",
+      "instruction": "take short video",
+      "data_type": "icon",
+      "data_source": "android",
+      "target_area_ratio": 0.07603665123456789,
+      "size_group": "very_large"
+    },
+    {
+      "index": 698,
+      "file_name": "mobile_07c1d6c0-7f94-457e-94b4-1e855dc1aded.png",
+      "instruction": "play video",
+      "data_type": "icon",
+      "data_source": "android",
+      "target_area_ratio": 0.008444444444444445,
+      "size_group": "large"
+    },
+    {
+      "index": 710,
+      "file_name": "mobile_aacb7bd4-e54a-4798-876a-eef079e17b2d.png",
+      "instruction": "1",
+      "data_type": "icon",
+      "data_source": "android",
+      "target_area_ratio": 0.030240740740740735,
+      "size_group": "very_large"
+    },
+    {
+      "index": 713,
+      "file_name": "mobile_674f6746-05c0-4e7d-93de-adf054f0eaf6.png",
+      "instruction": "post a new article",
+      "data_type": "icon",
+      "data_source": "android",
+      "target_area_ratio": 0.0049097222222222224,
+      "size_group": "medium"
+    },
+    {
+      "index": 714,
+      "file_name": "mobile_674f6746-05c0-4e7d-93de-adf054f0eaf6.png",
+      "instruction": "more settings",
+      "data_type": "icon",
+      "data_source": "android",
+      "target_area_ratio": 0.005784722222222224,
+      "size_group": "medium"
+    },
+    {
+      "index": 731,
+      "file_name": "mobile_791a59b0-e0dd-452f-b3c3-94238f7636f0.png",
+      "instruction": "start speed test",
+      "data_type": "icon",
+      "data_source": "android",
+      "target_area_ratio": 0.1598958333333333,
+      "size_group": "very_large"
+    },
+    {
+      "index": 736,
+      "file_name": "mobile_48d10f78-a92e-43fb-ace1-c1a4f5bccb90.png",
+      "instruction": "deny",
+      "data_type": "text",
+      "data_source": "android",
+      "target_area_ratio": 0.06007253086419757,
+      "size_group": "very_large"
+    },
+    {
+      "index": 737,
+      "file_name": "mobile_48d10f78-a92e-43fb-ace1-c1a4f5bccb90.png",
+      "instruction": "allow all require while use this app",
+      "data_type": "text",
+      "data_source": "android",
+      "target_area_ratio": 0.06462461419753088,
+      "size_group": "very_large"
+    },
+    {
+      "index": 748,
+      "file_name": "mobile_508e7610-9e30-4626-9ea3-37bf194cb1dd.png",
+      "instruction": "close",
+      "data_type": "icon",
+      "data_source": "android",
+      "target_area_ratio": 0.0054444444444444445,
+      "size_group": "medium"
+    },
+    {
+      "index": 777,
+      "file_name": "mobile_597cf265-2586-43ab-8048-99e06141f39f.png",
+      "instruction": "share",
+      "data_type": "icon",
+      "data_source": "android",
+      "target_area_ratio": 0.009027777777777773,
+      "size_group": "large"
+    },
+    {
+      "index": 789,
+      "file_name": "mobile_daf338f0-ebfc-488e-9a55-f8cc03394148.png",
+      "instruction": "view all folding apps",
+      "data_type": "text",
+      "data_source": "android",
+      "target_area_ratio": 0.0057453703703703694,
+      "size_group": "medium"
+    },
+    {
+      "index": 797,
+      "file_name": "mobile_5a0b24f9-66fe-4593-bcf5-4752d5332bcf.png",
+      "instruction": "open data roaming",
+      "data_type": "icon",
+      "data_source": "ios",
+      "target_area_ratio": 0.006586124951053863,
+      "size_group": "medium"
+    },
+    {
+      "index": 798,
+      "file_name": "mobile_5a0b24f9-66fe-4593-bcf5-4752d5332bcf.png",
+      "instruction": "back to cellular",
+      "data_type": "text",
+      "data_source": "ios",
+      "target_area_ratio": 0.009534370316360837,
+      "size_group": "large"
+    },
+    {
+      "index": 819,
+      "file_name": "mobile_b550b4ed-79ce-446a-a1c3-a164b314bfe8.png",
+      "instruction": "check out jony j's album",
+      "data_type": "icon",
+      "data_source": "ios",
+      "target_area_ratio": 0.2519011355504247,
+      "size_group": "very_large"
+    },
+    {
+      "index": 824,
+      "file_name": "mobile_f6313b8a-4258-47d1-97af-7868e04979a4.png",
+      "instruction": "previous one",
+      "data_type": "icon",
+      "data_source": "ios",
+      "target_area_ratio": 0.01276582816867177,
+      "size_group": "large"
+    },
+    {
+      "index": 835,
+      "file_name": "mobile_c9fe8f06-aa80-4f6a-abe2-5886567fdea3.png",
+      "instruction": "sequential music playback",
+      "data_type": "icon",
+      "data_source": "ios",
+      "target_area_ratio": 0.004859507703109599,
+      "size_group": "medium"
+    },
+    {
+      "index": 840,
+      "file_name": "web_fd8d71f6-4229-4458-a77e-7d8a6347c8e9.png",
+      "instruction": "go to personal homepage",
+      "data_type": "icon",
+      "data_source": "gitlab",
+      "target_area_ratio": 0.024399685329861105,
+      "size_group": "very_large"
+    },
+    {
+      "index": 859,
+      "file_name": "web_af76d21a-0a23-49c3-bc5b-842073bf28af.png",
+      "instruction": "search my projects",
+      "data_type": "text",
+      "data_source": "gitlab",
+      "target_area_ratio": 0.011252170138888889,
+      "size_group": "large"
+    },
+    {
+      "index": 870,
+      "file_name": "web_e640514e-5946-4808-922f-f50c51b0da78.png",
+      "instruction": "check followers",
+      "data_type": "text",
+      "data_source": "gitlab",
+      "target_area_ratio": 0.004296874999999992,
+      "size_group": "medium"
+    },
+    {
+      "index": 871,
+      "file_name": "web_e640514e-5946-4808-922f-f50c51b0da78.png",
+      "instruction": "switch to groups view",
+      "data_type": "text",
+      "data_source": "gitlab",
+      "target_area_ratio": 0.0035188802083333318,
+      "size_group": "medium"
+    },
+    {
+      "index": 872,
+      "file_name": "web_8d623438-5ac7-44f8-ab67-e07309a92f4a.png",
+      "instruction": "view all personal projects",
+      "data_type": "text",
+      "data_source": "gitlab",
+      "target_area_ratio": 0.002941080729166669,
+      "size_group": "small"
+    },
+    {
+      "index": 889,
+      "file_name": "web_37acd27f-731c-4292-8caf-159b9be41189.png",
+      "instruction": "install for ubuntu",
+      "data_type": "text",
+      "data_source": "gitlab",
+      "target_area_ratio": 0.08803927951388887,
+      "size_group": "very_large"
+    },
+    {
+      "index": 938,
+      "file_name": "web_2b491da3-f798-4866-b002-a25ab7d15263.png",
+      "instruction": "view privacy policy",
+      "data_type": "text",
+      "data_source": "shop",
+      "target_area_ratio": 0.003968641493055561,
+      "size_group": "medium"
+    },
+    {
+      "index": 939,
+      "file_name": "web_2b491da3-f798-4866-b002-a25ab7d15263.png",
+      "instruction": "ticked items",
+      "data_type": "icon",
+      "data_source": "shop",
+      "target_area_ratio": 0.004405653211805554,
+      "size_group": "medium"
+    },
+    {
+      "index": 948,
+      "file_name": "web_d3f48983-3396-4249-990c-d1214fbed944.png",
+      "instruction": "favorite the blueberry drink",
+      "data_type": "icon",
+      "data_source": "shop",
+      "target_area_ratio": 0.0009201388888888897,
+      "size_group": "small"
+    },
+    {
+      "index": 963,
+      "file_name": "web_f80a102f-7b1a-40f4-ad52-193e52d0cda0.png",
+      "instruction": "add the rh interiors weathered wood bundle table lamp",
+      "data_type": "text",
+      "data_source": "shop",
+      "target_area_ratio": 0.004071180555555549,
+      "size_group": "medium"
+    },
+    {
+      "index": 967,
+      "file_name": "web_589e44b7-401b-45f7-a223-b93ac59c5506.png",
+      "instruction": "view ps4",
+      "data_type": "text",
+      "data_source": "shop",
+      "target_area_ratio": 0.0088107638888889,
+      "size_group": "large"
+    },
+    {
+      "index": 988,
+      "file_name": "web_39126cee-4462-4567-9fa4-5ad1f3589047.png",
+      "instruction": "show reviews",
+      "data_type": "text",
+      "data_source": "shop",
+      "target_area_ratio": 0.004340277777777773,
+      "size_group": "medium"
+    },
+    {
+      "index": 997,
+      "file_name": "web_b645cb4e-48f2-4f75-8503-3da18f2e9b79.png",
+      "instruction": "check my account",
+      "data_type": "icon",
+      "data_source": "forum",
+      "target_area_ratio": 0.00845947265625,
+      "size_group": "large"
+    },
+    {
+      "index": 1018,
+      "file_name": "web_ab471260-bba4-4f1a-a34b-2391c3c88674.png",
+      "instruction": "hide the no.140 comment",
+      "data_type": "text",
+      "data_source": "forum",
+      "target_area_ratio": 0.0011458333333333327,
+      "size_group": "small"
+    },
+    {
+      "index": 1023,
+      "file_name": "web_5766e094-3b76-4b5f-8399-e47ff5506df2.png",
+      "instruction": "input the description of the forum",
+      "data_type": "icon",
+      "data_source": "forum",
+      "target_area_ratio": 0.04388699001736114,
+      "size_group": "very_large"
+    },
+    {
+      "index": 1024,
+      "file_name": "web_5766e094-3b76-4b5f-8399-e47ff5506df2.png",
+      "instruction": "view formatting help",
+      "data_type": "text",
+      "data_source": "forum",
+      "target_area_ratio": 0.002950846354166666,
+      "size_group": "small"
+    },
+    {
+      "index": 1059,
+      "file_name": "web_626e849e-afe2-47c7-8e67-da7331497c25.png",
+      "instruction": "log out my account",
+      "data_type": "text",
+      "data_source": "forum",
+      "target_area_ratio": 0.006009114583333338,
+      "size_group": "medium"
+    },
+    {
+      "index": 1087,
+      "file_name": "web_ea184924-e155-4745-abaa-1f9d0e870c67.png",
+      "instruction": "sign up",
+      "data_type": "text",
+      "data_source": "tool",
+      "target_area_ratio": 0.002946777343750002,
+      "size_group": "small"
+    },
+    {
+      "index": 1088,
+      "file_name": "web_ea184924-e155-4745-abaa-1f9d0e870c67.png",
+      "instruction": "zoom out",
+      "data_type": "icon",
+      "data_source": "tool",
+      "target_area_ratio": 0.0015858289930555504,
+      "size_group": "small"
+    },
+    {
+      "index": 1100,
+      "file_name": "web_da9f908d-568d-4d65-8587-47870f78f678.png",
+      "instruction": "need help",
+      "data_type": "text",
+      "data_source": "tool",
+      "target_area_ratio": 0.0011786566840277788,
+      "size_group": "small"
+    },
+    {
+      "index": 1103,
+      "file_name": "web_4b78be88-30cd-401d-8d6d-4ef5a035fbda.png",
+      "instruction": "check communities",
+      "data_type": "text",
+      "data_source": "tool",
+      "target_area_ratio": 0.002891710069444444,
+      "size_group": "small"
+    },
+    {
+      "index": 1105,
+      "file_name": "web_352ae757-fdf0-4d02-9167-c24a42629a60.png",
+      "instruction": "from where",
+      "data_type": "icon",
+      "data_source": "tool",
+      "target_area_ratio": 0.013489583333333329,
+      "size_group": "large"
+    },
+    {
+      "index": 1120,
+      "file_name": "web_c1b9d596-c60c-47e2-a863-ef92324405ef.png",
+      "instruction": "enter password",
+      "data_type": "icon",
+      "data_source": "tool",
+      "target_area_ratio": 0.04497721354166668,
+      "size_group": "very_large"
+    },
+    {
+      "index": 1126,
+      "file_name": "web_c5db0d44-6584-42e2-85c7-e4802276bad0.png",
+      "instruction": "add a note for the place on the map",
+      "data_type": "icon",
+      "data_source": "tool",
+      "target_area_ratio": 0.0007758246527777756,
+      "size_group": "small"
+    },
+    {
+      "index": 1130,
+      "file_name": "web_e0425287-c246-4122-a26e-6e0ca5958d4e.png",
+      "instruction": "check geo uri",
+      "data_type": "icon",
+      "data_source": "tool",
+      "target_area_ratio": 0.004277886284722216,
+      "size_group": "medium"
+    },
+    {
+      "index": 1140,
+      "file_name": "web_467ae916-9a16-4517-85cc-f439c79e8c44.png",
+      "instruction": "support with a donation",
+      "data_type": "text",
+      "data_source": "tool",
+      "target_area_ratio": 0.005885959201388892,
+      "size_group": "medium"
+    },
+    {
+      "index": 1142,
+      "file_name": "web_df166734-1f33-4e1d-887f-292ee9c21502.png",
+      "instruction": "check wikipedia",
+      "data_type": "text",
+      "data_source": "tool",
+      "target_area_ratio": 0.001337890625000003,
+      "size_group": "small"
+    },
+    {
+      "index": 1143,
+      "file_name": "web_df166734-1f33-4e1d-887f-292ee9c21502.png",
+      "instruction": "goto france wikipedia",
+      "data_type": "text",
+      "data_source": "tool",
+      "target_area_ratio": 0.001546223958333331,
+      "size_group": "small"
+    },
+    {
+      "index": 1161,
+      "file_name": "web_c95137ce-a84e-4c7c-9845-65157033e501.png",
+      "instruction": "open wikidata artcle upon earth item",
+      "data_type": "icon",
+      "data_source": "tool",
+      "target_area_ratio": 0.0017572699652777764,
+      "size_group": "small"
+    },
+    {
+      "index": 1166,
+      "file_name": "web_3357799b-92ed-4ce8-8c01-452993f9397b.png",
+      "instruction": "open page about arsene wenger",
+      "data_type": "icon",
+      "data_source": "tool",
+      "target_area_ratio": 0.03488823784722225,
+      "size_group": "very_large"
+    },
+    {
+      "index": 1167,
+      "file_name": "web_3357799b-92ed-4ce8-8c01-452993f9397b.png",
+      "instruction": "open page about arsenal f.c.",
+      "data_type": "icon",
+      "data_source": "tool",
+      "target_area_ratio": 0.03464735243055555,
+      "size_group": "very_large"
+    },
+    {
+      "index": 1172,
+      "file_name": "web_cd72d06c-67ca-4ed8-b550-dcf4b33e5381.png",
+      "instruction": "open options page",
+      "data_type": "text",
+      "data_source": "tool",
+      "target_area_ratio": 0.0012133789062499978,
+      "size_group": "small"
+    },
+    {
+      "index": 1182,
+      "file_name": "web_c334b955-9eb9-48c2-998b-9f6cb87bbb8f.png",
+      "instruction": "enter wikipedia page of core victoria deihl",
+      "data_type": "icon",
+      "data_source": "tool",
+      "target_area_ratio": 0.004584418402777775,
+      "size_group": "medium"
+    },
+    {
+      "index": 1187,
+      "file_name": "web_22e2b9c7-0140-47aa-8e14-cfd883f3baaf.png",
+      "instruction": "open linked pdf file",
+      "data_type": "text",
+      "data_source": "tool",
+      "target_area_ratio": 0.0007896592881944441,
+      "size_group": "small"
+    },
+    {
+      "index": 1189,
+      "file_name": "web_0092e09d-acc7-4ced-8871-47cb05a0a554.png",
+      "instruction": "enter username",
+      "data_type": "text",
+      "data_source": "tool",
+      "target_area_ratio": 0.013847927517361107,
+      "size_group": "large"
+    },
+    {
+      "index": 1203,
+      "file_name": "web_e32af83c-f30c-4104-82b3-d5b9a84ad5ee.png",
+      "instruction": "open arsenal f.c. records and player records webpage",
+      "data_type": "icon",
+      "data_source": "tool",
+      "target_area_ratio": 0.00883029513888889,
+      "size_group": "large"
+    },
+    {
+      "index": 1204,
+      "file_name": "web_43eca188-6adf-4bfe-bb49-56dad5717132.png",
+      "instruction": "open keras",
+      "data_type": "text",
+      "data_source": "tool",
+      "target_area_ratio": 0.0012589518229166672,
+      "size_group": "small"
+    },
+    {
+      "index": 1218,
+      "file_name": "web_147f0485-994a-4176-bd82-88d81ab8607a.png",
+      "instruction": "search in all area",
+      "data_type": "text",
+      "data_source": "tool",
+      "target_area_ratio": 0.0008463541666666664,
+      "size_group": "small"
+    },
+    {
+      "index": 1233,
+      "file_name": "web_6e4b8b0d-45fe-4d2a-864a-782e08ae8d21.png",
+      "instruction": "remove the first item from the shopping cart",
+      "data_type": "text",
+      "data_source": "shop",
+      "target_area_ratio": 0.004707845052083339,
+      "size_group": "medium"
+    },
+    {
+      "index": 1236,
+      "file_name": "web_8a36314e-03d8-422d-920b-d3a93c12e6a5.png",
+      "instruction": "sign in the website",
+      "data_type": "text",
+      "data_source": "shop",
+      "target_area_ratio": 0.0017626953125000008,
+      "size_group": "small"
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+condition,correct,wrong_location,no_valid_action,inference_error,accuracy_percent,valid_action_rate_percent
+Native resolution,89,30,8,1,69.53,92.97
+Capped resolution,75,44,9,0,58.59,92.97
