@@ -43,7 +43,8 @@ packaged reproducibly.
 - [x] Save overall, target-type, and target-size results.
 - [ ] Document the Colab environment and exact inference configuration.
 - [ ] Add paired failure examples and uncertainty estimates.
-- [ ] Begin Part B controlled action-failure experiments.
+- [ ] Validate deterministic click-failure injection locally.
+- [ ] Connect the VLM agent and begin Part B controlled comparisons.
 
 ## Interpretation boundary
 

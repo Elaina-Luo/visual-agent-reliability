@@ -79,8 +79,11 @@ Regenerate the result figures:
 
 The repository also contains a deterministic six-card browser environment.
 It supports screenshots, real clicks, selection-state changes, submission, and
-automated scoring. The next study will compare reactive behavior, explicit
-verification, and bounded retry under controlled click failures.
+automated scoring. Its executor can deterministically drop the first valid card
+click while keeping the fault flag hidden from the Agent. Scripted checks verify
+that the dropped click leaves page state unchanged and that a repeated click can
+recover. The next study will compare reactive behavior, explicit verification,
+and bounded retry under this controlled failure.
 
 Start the environment:
 
