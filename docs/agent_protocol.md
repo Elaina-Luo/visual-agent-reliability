@@ -22,6 +22,11 @@ or:
 {"type": "finish"}
 ```
 
+The action adapter also accepts Qwen's unambiguous native single-click form,
+`{"type": "click", "x": [420, 210]}`, and normalizes it to the internal
+`x`/`y` schema. Raw output remains in the trace. Outputs containing multiple
+JSON actions are rejected rather than guessed.
+
 The prompt explicitly requires separate integer `x` and `y` fields and rejects
 coordinate arrays or multiple actions in one response. This output contract was
 calibrated on the three development smoke tests before freezing B0.
