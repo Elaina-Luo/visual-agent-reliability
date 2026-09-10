@@ -18,7 +18,11 @@ The output contract is one JSON object, such as:
 {"status": "no_effect"}
 ```
 
-The first B1 recovery policy will retry the same coordinate at most once after
-`no_effect`. `complete` will terminate the episode. `changed` and `uncertain`
-will return control to the Actor with the verification result in visible
-history. Recovery logic is intentionally not part of this protocol commit.
+The B1 recovery policy retries the same coordinate at most once after
+`no_effect`. `complete` terminates the episode. `changed` and `uncertain`
+return control to the Actor with the verification result in visible history.
+
+Retries count against the same eight-action budget as Actor actions. Each trace
+records the raw Verifier output, parsed status, Verifier latency, retry source,
+and evaluator-only audit state. The audit state is written after the episode
+step and is never included in either model prompt.

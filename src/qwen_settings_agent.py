@@ -18,12 +18,25 @@ def build_reactive_prompt(
     remaining_steps,
     width,
     height,
+    verification_history=None,
 ):
     action_history = (
         json.dumps(recent_actions[-4:])
         if recent_actions
         else "No previous actions."
     )
+
+    verifier_context = ""
+    if verification_history:
+        verifier_context = f"""
+
+Recent visual verification results:
+{json.dumps(verification_history[-4:])}
+
+Use this feedback when choosing the next action. If a click visibly changed
+the intended control, do not immediately click the same control again. If a
+click had no visible effect, the recovery policy may already have retried it.
+"""
 
     return f"""
 You control a desktop Settings application using only screenshots.
@@ -41,6 +54,7 @@ Coordinate system:
 
 Recent actions you previously requested:
 {action_history}
+{verifier_context}
 
 Remaining action budget: {remaining_steps}
 
@@ -79,7 +93,14 @@ class QwenSettingsAgent:
         )
         self.model.eval()
 
-    def decide(self, image, goal, recent_actions, remaining_steps):
+    def decide(
+        self,
+        image,
+        goal,
+        recent_actions,
+        remaining_steps,
+        verification_history=None,
+    ):
         width, height = image.size
         prompt = build_reactive_prompt(
             goal,
@@ -87,6 +108,7 @@ class QwenSettingsAgent:
             remaining_steps,
             width,
             height,
+            verification_history,
         )
         messages = [
             {

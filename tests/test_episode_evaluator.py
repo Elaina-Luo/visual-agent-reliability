@@ -49,6 +49,17 @@ class EpisodeEvaluatorTests(unittest.TestCase):
         self.assertTrue(result["agent_terminated_correctly"])
         self.assertFalse(result["success"])
 
+    def test_verifier_can_terminate_completed_episode(self):
+        result = evaluate_episode(
+            self.completed_state,
+            self.task,
+            "verifier_complete",
+        )
+
+        self.assertTrue(result["task_state_success"])
+        self.assertTrue(result["agent_terminated_correctly"])
+        self.assertTrue(result["success"])
+
 
 if __name__ == "__main__":
     unittest.main()
