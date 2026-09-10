@@ -88,8 +88,13 @@ environments now support deterministic dropped-click faults with evaluator-only
 audit state. The Settings App drops the first click that would change a setting
 while leaving navigation and submission actions unaffected. Scripted checks
 compare no retry against one repeated setting click; they validate the fault
-mechanism, not autonomous Agent recovery. The next implementation step is the
-Qwen observation–action loop.
+mechanism, not autonomous Agent recovery.
+
+The B0 reactive runner uses Qwen2.5-VL-3B-Instruct as a screenshot-to-action
+policy. It executes an eight-step `observe → decide → act → observe` loop and
+saves screenshots, raw model outputs, parsed actions, hidden execution audits,
+and the final result. See the [agent protocol](docs/agent_protocol.md) for the
+baseline boundary.
 
 Start the environment:
 
@@ -109,6 +114,19 @@ Run the multi-step Settings App check:
 .\.venv\Scripts\python.exe run_settings_scripted.py
 ```
 
+Run one B0 episode in a GPU environment after installing
+`requirements-agent.txt` and Playwright Chromium:
+
+```bash
+python run_settings_agent.py --seed 0 --fault-mode none
+```
+
+After the normal smoke test is inspected, run one dropped-click episode:
+
+```bash
+python run_settings_agent.py --seed 1 --fault-mode drop_first_setting_change
+```
+
 See the [Settings App task specification](docs/settings_task_spec.md) for the
 observation, action, success, and hidden-information contract.
 
@@ -119,6 +137,7 @@ environment/   Simple regression task and realistic Settings App for Part B
 experiments/   Colab VLM inference notebook
 results/       Frozen manifest, predictions, tables, and figures
 src/           Dataset inspection, evaluation, sanity checks, and plotting
+tests/         Lightweight parser tests
 docs/          Research scope and checkpoints
 ```
 
