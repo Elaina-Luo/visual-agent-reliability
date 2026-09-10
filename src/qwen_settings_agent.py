@@ -46,13 +46,24 @@ Remaining action budget: {remaining_steps}
 
 Choose exactly one next action from the current screenshot.
 
-To click, return:
+STRICT OUTPUT CONTRACT:
+- Return exactly one JSON object and no other text.
+- Return only one action. Never combine a click and finish.
+- For a click, x and y must be two separate integer fields.
+- Never put both coordinates inside a list or array.
+
+Valid click format:
 {{"type": "click", "x": integer, "y": integer}}
 
-When the goal is fully completed and saved, return:
+Valid finish format, only when the current screenshot shows that the goal is
+fully completed and saved:
 {{"type": "finish"}}
 
-Return only one JSON object. Do not include explanation or markdown.
+Invalid formats include:
+{{"type": "click", "x": [420, 210]}}
+{{"type": "click", "x": 420, "y": 210}}; {{"type": "finish"}}
+
+Do not include explanation, markdown, or a future action.
 """.strip()
 
 

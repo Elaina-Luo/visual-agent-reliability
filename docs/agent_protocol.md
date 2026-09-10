@@ -22,6 +22,10 @@ or:
 {"type": "finish"}
 ```
 
+The prompt explicitly requires separate integer `x` and `y` fields and rejects
+coordinate arrays or multiple actions in one response. This output contract was
+calibrated on the three development smoke tests before freezing B0.
+
 B0 receives a new screenshot after every click but has no explicit
 `achieved / failed / uncertain` verification stage and no forced retry rule.
 This allows natural reactive recovery without building an artificially weak
