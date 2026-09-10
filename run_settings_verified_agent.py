@@ -20,6 +20,12 @@ from src.settings_executor import (
     wait_for_render,
 )
 from src.verifier_parser import parse_verification
+from src.visual_change import (
+    DEFAULT_CHANGED_FRACTION_THRESHOLD,
+    DEFAULT_INTENSITY_THRESHOLD,
+    changed_pixel_fraction,
+    fuse_verification,
+)
 
 
 PROJECT_DIR = Path(__file__).resolve().parent
@@ -39,6 +45,10 @@ def capture(page, output_dir, name):
 
 
 def verify_transition(verifier, before_image, after_image, goal, action):
+    pixel_change_fraction = changed_pixel_fraction(
+        before_image,
+        after_image,
+    )
     try:
         raw_output, latency_seconds = verifier.verify(
             before_image=before_image,
@@ -49,22 +59,32 @@ def verify_transition(verifier, before_image, after_image, goal, action):
     except Exception as error:
         return {
             "raw_output": None,
-            "status": "uncertain",
+            "vlm_status": "uncertain",
+            "status": fuse_verification(
+                "uncertain",
+                pixel_change_fraction,
+            ),
+            "pixel_change_fraction": pixel_change_fraction,
             "latency_seconds": None,
             "error": f"{type(error).__name__}: {error}",
         }
 
     try:
         verification = parse_verification(raw_output)
-        status = verification["status"]
+        vlm_status = verification["status"]
         parse_error = None
     except ValueError as error:
-        status = "uncertain"
+        vlm_status = "uncertain"
         parse_error = str(error)
 
     return {
         "raw_output": raw_output,
-        "status": status,
+        "vlm_status": vlm_status,
+        "status": fuse_verification(
+            vlm_status,
+            pixel_change_fraction,
+        ),
+        "pixel_change_fraction": pixel_change_fraction,
         "latency_seconds": latency_seconds,
         "error": parse_error,
     }
@@ -92,6 +112,9 @@ def execute_verified_click(
         fault_mode,
         fault_state,
     )
+    # Let the Settings App's 150 ms visual transitions settle before
+    # comparing screenshots.
+    page.wait_for_timeout(180)
     after_name = f"step_{action_number:02d}_after.png"
     after_image = capture(page, output_dir, after_name)
     verification = verify_transition(
@@ -113,7 +136,9 @@ def execute_verified_click(
         "execution_status": execution["execution_status"],
         "fault_triggered": execution["fault_triggered"],
         "verification_raw_output": verification["raw_output"],
+        "verification_vlm_status": verification["vlm_status"],
         "verification_status": verification["status"],
+        "pixel_change_fraction": verification["pixel_change_fraction"],
         "verification_latency_seconds": verification["latency_seconds"],
         "verification_error": verification["error"],
         "evaluator_state_before": execution["evaluator_state_before"],
@@ -291,7 +316,7 @@ def run_episode(
     )
     result = {
         "model_id": actor.model_id,
-        "strategy": "visual_verification_retry_1",
+        "strategy": "hybrid_visual_verification_retry_1",
         "fault_mode": fault_mode,
         "fault_triggered": fault_state["triggered"],
         "task": task,
@@ -302,6 +327,12 @@ def run_episode(
         "verifier_calls": sum(
             "verification_status" in record for record in trace
         ),
+        "pixel_change_config": {
+            "intensity_threshold": DEFAULT_INTENSITY_THRESHOLD,
+            "changed_fraction_threshold": (
+                DEFAULT_CHANGED_FRACTION_THRESHOLD
+            ),
+        },
         "final_state": final_state,
         "trace": trace,
     }
