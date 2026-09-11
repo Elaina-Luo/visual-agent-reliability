@@ -36,6 +36,9 @@ Recent visual verification results:
 Use this feedback when choosing the next action. If a click visibly changed
 the intended control, do not immediately click the same control again. If a
 click had no visible effect, the recovery policy may already have retried it.
+A status of repeat_blocked means the proposed click was not executed because
+nearly the same coordinate had just caused a visible change. Choose a
+different action and do not propose that coordinate again.
 """
 
     return f"""
