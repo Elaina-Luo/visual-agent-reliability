@@ -316,7 +316,9 @@ def run_episode(
     )
     result = {
         "model_id": actor.model_id,
-        "strategy": "hybrid_visual_verification_retry_1",
+        "strategy": (
+            "hybrid_visual_verification_retry_1_completion_guard"
+        ),
         "fault_mode": fault_mode,
         "fault_triggered": fault_state["triggered"],
         "task": task,
@@ -385,6 +387,10 @@ def main():
 
     print("Success:", result["success"])
     print("Task state success:", result["task_state_success"])
+    print(
+        "Termination signal emitted:",
+        result["termination_signal_emitted"],
+    )
     print(
         "Agent terminated correctly:",
         result["agent_terminated_correctly"],

@@ -1,9 +1,19 @@
 import unittest
 
 from src.verifier_parser import parse_verification
+from src.verifier_prompt import build_verifier_prompt
 
 
 class ParseVerificationTests(unittest.TestCase):
+    def test_prompt_rejects_pending_confirmation_as_complete(self):
+        prompt = build_verifier_prompt(
+            "Select Compact density and save the changes.",
+            {"type": "click", "x": 849, "y": 582},
+        )
+
+        self.assertIn("confirmation dialog is changed, not complete", prompt)
+        self.assertIn("pending user action", prompt)
+
     def test_parses_each_valid_status(self):
         for status in ("complete", "changed", "no_effect", "uncertain"):
             with self.subTest(status=status):

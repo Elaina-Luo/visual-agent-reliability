@@ -53,7 +53,10 @@ budget is exhausted, or inference fails. The evaluator reports three fields:
 
 - `task_state_success`: the requested value was saved, with no unapplied
   changes or open confirmation dialog;
-- `agent_terminated_correctly`: the Agent explicitly returned `finish`; and
+- `termination_signal_emitted`: the Actor returned `finish` or the Verifier
+  returned `complete`;
+- `agent_terminated_correctly`: a termination signal was emitted and the
+  hidden audit confirms the task state was actually complete; and
 - `success`: both conditions are true.
 
 This exposes cases where the Agent completes the GUI task but continues acting
