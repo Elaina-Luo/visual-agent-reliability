@@ -38,6 +38,14 @@ The policy retries the same coordinate at most once after the fused
 `no_effect` result. `complete` terminates the episode. Other results return
 control to the Actor with verification feedback in visible history.
 
+Before a `complete` candidate may terminate the episode, a separate Completion
+Gate inspects only the after screenshot and goal. It emits a strict
+`pending_action` boolean. An open dialog, visible Apply/Confirm/Save decision,
+or insufficient evidence of saved completion sets `pending_action` to true and
+downgrades the candidate to `changed`. Gate inference or parsing failures fail
+closed to `pending_action: true`. Completion Gate calls and latency are logged
+separately from transition-verifier calls.
+
 Retries count against the same eight-action budget as Actor actions. Each trace
 records the raw Verifier output, parsed status, Verifier latency, retry source,
 and evaluator-only audit state. The audit state is written after the episode

@@ -8,7 +8,9 @@ from playwright.sync_api import sync_playwright
 
 from environment.settings_tasks import generate_settings_task
 from src.action_parser import parse_agent_action
+from src.completion_gate import gate_completion, parse_completion_gate
 from src.episode_evaluator import evaluate_episode
+from src.qwen_completion_gate import QwenCompletionGate
 from src.qwen_settings_agent import DEFAULT_MODEL_ID, QwenSettingsAgent
 from src.qwen_settings_verifier import QwenSettingsVerifier
 from src.recovery_policy import choose_recovery
@@ -44,7 +46,14 @@ def capture(page, output_dir, name):
     return screenshot_image(screenshot_bytes)
 
 
-def verify_transition(verifier, before_image, after_image, goal, action):
+def verify_transition(
+    verifier,
+    completion_gate,
+    before_image,
+    after_image,
+    goal,
+    action,
+):
     pixel_change_fraction = changed_pixel_fraction(
         before_image,
         after_image,
@@ -57,16 +66,22 @@ def verify_transition(verifier, before_image, after_image, goal, action):
             requested_action=action,
         )
     except Exception as error:
+        fused_status = fuse_verification(
+            "uncertain",
+            pixel_change_fraction,
+        )
         return {
             "raw_output": None,
             "vlm_status": "uncertain",
-            "status": fuse_verification(
-                "uncertain",
-                pixel_change_fraction,
-            ),
+            "status": fused_status,
             "pixel_change_fraction": pixel_change_fraction,
             "latency_seconds": None,
             "error": f"{type(error).__name__}: {error}",
+            "completion_gate_called": False,
+            "completion_gate_raw_output": None,
+            "completion_gate_pending_action": None,
+            "completion_gate_latency_seconds": None,
+            "completion_gate_error": None,
         }
 
     try:
@@ -77,22 +92,54 @@ def verify_transition(verifier, before_image, after_image, goal, action):
         vlm_status = "uncertain"
         parse_error = str(error)
 
+    fused_status = fuse_verification(
+        vlm_status,
+        pixel_change_fraction,
+    )
+    gate_called = fused_status == "complete"
+    gate_raw_output = None
+    gate_latency_seconds = None
+    gate_error = None
+    pending_action = None
+
+    if gate_called:
+        try:
+            gate_raw_output, gate_latency_seconds = completion_gate.check(
+                image=after_image,
+                goal=goal,
+            )
+            gate_decision = parse_completion_gate(gate_raw_output)
+            pending_action = gate_decision["pending_action"]
+        except Exception as error:
+            # Fail closed: an unavailable or malformed stop gate must not
+            # terminate an episode on an unverified complete candidate.
+            pending_action = True
+            gate_error = f"{type(error).__name__}: {error}"
+
+        fused_status = gate_completion(
+            fused_status,
+            pending_action,
+        )
+
     return {
         "raw_output": raw_output,
         "vlm_status": vlm_status,
-        "status": fuse_verification(
-            vlm_status,
-            pixel_change_fraction,
-        ),
+        "status": fused_status,
         "pixel_change_fraction": pixel_change_fraction,
         "latency_seconds": latency_seconds,
         "error": parse_error,
+        "completion_gate_called": gate_called,
+        "completion_gate_raw_output": gate_raw_output,
+        "completion_gate_pending_action": pending_action,
+        "completion_gate_latency_seconds": gate_latency_seconds,
+        "completion_gate_error": gate_error,
     }
 
 
 def execute_verified_click(
     page,
     verifier,
+    completion_gate,
     task,
     action,
     before_image,
@@ -119,6 +166,7 @@ def execute_verified_click(
     after_image = capture(page, output_dir, after_name)
     verification = verify_transition(
         verifier,
+        completion_gate,
         before_image,
         after_image,
         task["goal"],
@@ -141,6 +189,17 @@ def execute_verified_click(
         "pixel_change_fraction": verification["pixel_change_fraction"],
         "verification_latency_seconds": verification["latency_seconds"],
         "verification_error": verification["error"],
+        "completion_gate_called": verification["completion_gate_called"],
+        "completion_gate_raw_output": verification[
+            "completion_gate_raw_output"
+        ],
+        "completion_gate_pending_action": verification[
+            "completion_gate_pending_action"
+        ],
+        "completion_gate_latency_seconds": verification[
+            "completion_gate_latency_seconds"
+        ],
+        "completion_gate_error": verification["completion_gate_error"],
         "evaluator_state_before": execution["evaluator_state_before"],
         "evaluator_state_after": execution["evaluator_state_after"],
     }
@@ -151,6 +210,7 @@ def run_episode(
     page,
     actor,
     verifier,
+    completion_gate,
     task,
     fault_mode=FAULT_NONE,
     max_steps=8,
@@ -245,6 +305,7 @@ def run_episode(
         record, after_image, after_name = execute_verified_click(
             page=page,
             verifier=verifier,
+            completion_gate=completion_gate,
             task=task,
             action=action,
             before_image=before_image,
@@ -281,6 +342,7 @@ def run_episode(
         retry_record, _, _ = execute_verified_click(
             page=page,
             verifier=verifier,
+            completion_gate=completion_gate,
             task=task,
             action=action,
             before_image=after_image,
@@ -317,7 +379,7 @@ def run_episode(
     result = {
         "model_id": actor.model_id,
         "strategy": (
-            "hybrid_visual_verification_retry_1_completion_guard"
+            "hybrid_visual_verification_retry_1_completion_gate_v1"
         ),
         "fault_mode": fault_mode,
         "fault_triggered": fault_state["triggered"],
@@ -328,6 +390,14 @@ def run_episode(
         "retry_count": retry_count,
         "verifier_calls": sum(
             "verification_status" in record for record in trace
+        ),
+        "completion_gate_calls": sum(
+            record.get("completion_gate_called", False)
+            for record in trace
+        ),
+        "completion_gate_latency_seconds": sum(
+            record.get("completion_gate_latency_seconds") or 0.0
+            for record in trace
         ),
         "pixel_change_config": {
             "intensity_threshold": DEFAULT_INTENSITY_THRESHOLD,
@@ -360,11 +430,12 @@ def main():
 
     task = generate_settings_task(args.seed)
     print("Goal:", task["goal"])
-    print("Strategy: visual verification + one retry")
+    print("Strategy: hybrid verification + one retry + completion gate")
     print("Fault mode:", args.fault_mode)
     print("Loading model:", args.model_id)
     actor = QwenSettingsAgent(args.model_id)
     verifier = QwenSettingsVerifier(actor)
+    completion_gate = QwenCompletionGate(actor)
 
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=not args.headed)
@@ -379,6 +450,7 @@ def main():
             page=page,
             actor=actor,
             verifier=verifier,
+            completion_gate=completion_gate,
             task=task,
             fault_mode=args.fault_mode,
             max_steps=args.max_steps,
@@ -398,6 +470,7 @@ def main():
     print("Steps:", result["steps"])
     print("Retries:", result["retry_count"])
     print("Verifier calls:", result["verifier_calls"])
+    print("Completion Gate calls:", result["completion_gate_calls"])
     print("Termination:", result["termination_reason"])
     print("Fault triggered:", result["fault_triggered"])
 
