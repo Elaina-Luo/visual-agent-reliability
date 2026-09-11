@@ -16,6 +16,7 @@ from src.qwen_settings_verifier import QwenSettingsVerifier
 from src.recovery_policy import choose_recovery
 from src.repeat_guard import (
     DEFAULT_REPEAT_RADIUS,
+    active_forbidden_click_region,
     should_block_repeated_click,
 )
 from src.settings_executor import (
@@ -242,6 +243,7 @@ def run_episode(
     action_number = 0
     retry_count = 0
     repeat_block_count = 0
+    forbidden_region_prompt_count = 0
     last_executed_action = None
     last_verification_status = None
 
@@ -249,6 +251,12 @@ def run_episode(
         next_number = action_number + 1
         before_name = f"step_{next_number:02d}_before.png"
         before_image = capture(page, output_dir, before_name)
+        forbidden_click_region = active_forbidden_click_region(
+            last_executed_action,
+            last_verification_status,
+        )
+        if forbidden_click_region is not None:
+            forbidden_region_prompt_count += 1
 
         try:
             raw_output, actor_latency = actor.decide(
@@ -257,6 +265,7 @@ def run_episode(
                 recent_actions=visible_actions,
                 remaining_steps=max_steps - action_number,
                 verification_history=verification_history,
+                forbidden_click_region=forbidden_click_region,
             )
         except Exception as error:
             action_number += 1
@@ -416,7 +425,7 @@ def run_episode(
         "model_id": actor.model_id,
         "strategy": (
             "hybrid_visual_verification_retry_1_completion_gate_"
-            "repeat_guard_v1"
+            "repeat_guard_forbidden_region_v1"
         ),
         "fault_mode": fault_mode,
         "fault_triggered": fault_state["triggered"],
@@ -427,6 +436,7 @@ def run_episode(
         "retry_count": retry_count,
         "repeat_blocks": repeat_block_count,
         "repeat_guard_radius": DEFAULT_REPEAT_RADIUS,
+        "forbidden_region_prompt_count": forbidden_region_prompt_count,
         "verifier_calls": sum(
             "verification_vlm_status" in record for record in trace
         ),
@@ -471,7 +481,7 @@ def main():
     print("Goal:", task["goal"])
     print(
         "Strategy: hybrid verification + one retry + completion gate "
-        "+ repeat guard"
+        "+ repeat guard + forbidden region replanning"
     )
     print("Fault mode:", args.fault_mode)
     print("Loading model:", args.model_id)
@@ -512,6 +522,10 @@ def main():
     print("Steps:", result["steps"])
     print("Retries:", result["retry_count"])
     print("Repeat blocks:", result["repeat_blocks"])
+    print(
+        "Forbidden-region prompts:",
+        result["forbidden_region_prompt_count"],
+    )
     print("Verifier calls:", result["verifier_calls"])
     print("Completion Gate calls:", result["completion_gate_calls"])
     print("Termination:", result["termination_reason"])
