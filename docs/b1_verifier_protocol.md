@@ -47,6 +47,13 @@ to the browser or Verifier. The guard does not interfere with the bounded
 recovery retry after `no_effect`. Its coordinate radius and block count are
 stored in every result file.
 
+Whenever that region is active, the next Actor prompt also exposes it as a
+hard replanning constraint with its center and radius. This gives the Actor
+the constraint before it proposes another action, instead of relying only on
+natural-language history after a block. The number of Actor calls containing
+this constraint is logged separately. A `no_effect` result creates no
+forbidden region, so the bounded recovery retry remains available.
+
 Before a `complete` candidate may terminate the episode, a separate Completion
 Gate inspects only the after screenshot and goal. It emits a strict
 `pending_action` boolean. An open dialog, visible Apply/Confirm/Save decision,
