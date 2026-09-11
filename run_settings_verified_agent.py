@@ -14,6 +14,10 @@ from src.qwen_completion_gate import QwenCompletionGate
 from src.qwen_settings_agent import DEFAULT_MODEL_ID, QwenSettingsAgent
 from src.qwen_settings_verifier import QwenSettingsVerifier
 from src.recovery_policy import choose_recovery
+from src.repeat_guard import (
+    DEFAULT_REPEAT_RADIUS,
+    should_block_repeated_click,
+)
 from src.settings_executor import (
     FAULT_NONE,
     VALID_FAULT_MODES,
@@ -237,6 +241,9 @@ def run_episode(
     termination_reason = "budget_exhausted"
     action_number = 0
     retry_count = 0
+    repeat_block_count = 0
+    last_executed_action = None
+    last_verification_status = None
 
     while action_number < max_steps:
         next_number = action_number + 1
@@ -288,8 +295,8 @@ def run_episode(
             })
             continue
 
-        visible_actions.append(action)
         if action["type"] == "finish":
+            visible_actions.append(action)
             termination_reason = "agent_finish"
             trace.append({
                 "step": action_number,
@@ -301,6 +308,31 @@ def run_episode(
                 "execution_status": "finished",
             })
             break
+
+        visible_actions.append(action)
+        if should_block_repeated_click(
+            action,
+            last_executed_action,
+            last_verification_status,
+        ):
+            repeat_block_count += 1
+            trace.append({
+                "step": action_number,
+                "source": "actor",
+                "observation_before": before_name,
+                "actor_raw_output": raw_output,
+                "actor_latency_seconds": actor_latency,
+                "action": action,
+                "execution_status": "blocked_repeat_after_change",
+                "verification_status": "repeat_blocked",
+                "error": None,
+            })
+            verification_history.append({
+                "action": action,
+                "status": "repeat_blocked",
+                "retry": False,
+            })
+            continue
 
         record, after_image, after_name = execute_verified_click(
             page=page,
@@ -324,6 +356,8 @@ def run_episode(
             "status": record["verification_status"],
             "retry": False,
         })
+        last_executed_action = action
+        last_verification_status = record["verification_status"]
 
         recovery = choose_recovery(
             record["verification_status"],
@@ -359,6 +393,8 @@ def run_episode(
             "status": retry_record["verification_status"],
             "retry": True,
         })
+        last_executed_action = action
+        last_verification_status = retry_record["verification_status"]
 
         retry_recovery = choose_recovery(
             retry_record["verification_status"],
@@ -379,7 +415,8 @@ def run_episode(
     result = {
         "model_id": actor.model_id,
         "strategy": (
-            "hybrid_visual_verification_retry_1_completion_gate_v1"
+            "hybrid_visual_verification_retry_1_completion_gate_"
+            "repeat_guard_v1"
         ),
         "fault_mode": fault_mode,
         "fault_triggered": fault_state["triggered"],
@@ -388,8 +425,10 @@ def run_episode(
         "termination_reason": termination_reason,
         "steps": len(trace),
         "retry_count": retry_count,
+        "repeat_blocks": repeat_block_count,
+        "repeat_guard_radius": DEFAULT_REPEAT_RADIUS,
         "verifier_calls": sum(
-            "verification_status" in record for record in trace
+            "verification_vlm_status" in record for record in trace
         ),
         "completion_gate_calls": sum(
             record.get("completion_gate_called", False)
@@ -430,7 +469,10 @@ def main():
 
     task = generate_settings_task(args.seed)
     print("Goal:", task["goal"])
-    print("Strategy: hybrid verification + one retry + completion gate")
+    print(
+        "Strategy: hybrid verification + one retry + completion gate "
+        "+ repeat guard"
+    )
     print("Fault mode:", args.fault_mode)
     print("Loading model:", args.model_id)
     actor = QwenSettingsAgent(args.model_id)
@@ -469,6 +511,7 @@ def main():
     )
     print("Steps:", result["steps"])
     print("Retries:", result["retry_count"])
+    print("Repeat blocks:", result["repeat_blocks"])
     print("Verifier calls:", result["verifier_calls"])
     print("Completion Gate calls:", result["completion_gate_calls"])
     print("Termination:", result["termination_reason"])

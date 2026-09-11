@@ -38,6 +38,15 @@ The policy retries the same coordinate at most once after the fused
 `no_effect` result. `complete` terminates the episode. Other results return
 control to the Actor with verification feedback in visible history.
 
+An action-level repeat guard prevents an immediate same or nearby Actor click
+after the previous executed click produced the fused `changed` result. The
+guard uses only action coordinates and visual-verification history; it does
+not read DOM or evaluator state. The blocked proposal is recorded as
+`repeat_blocked` and consumes one step of the shared budget, but is not sent
+to the browser or Verifier. The guard does not interfere with the bounded
+recovery retry after `no_effect`. Its coordinate radius and block count are
+stored in every result file.
+
 Before a `complete` candidate may terminate the episode, a separate Completion
 Gate inspects only the after screenshot and goal. It emits a strict
 `pending_action` boolean. An open dialog, visible Apply/Confirm/Save decision,
