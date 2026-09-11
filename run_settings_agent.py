@@ -200,6 +200,10 @@ def main():
     print("Success:", result["success"])
     print("Task state success:", result["task_state_success"])
     print(
+        "Termination signal emitted:",
+        result["termination_signal_emitted"],
+    )
+    print(
         "Agent terminated correctly:",
         result["agent_terminated_correctly"],
     )

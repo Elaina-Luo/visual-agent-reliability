@@ -12,6 +12,11 @@ The Verifier emits one status:
 - `no_effect`: the relevant visible GUI state did not change; or
 - `uncertain`: the images do not justify another label.
 
+`complete` additionally requires that no visible dialog, prompt, or pending
+user action remains. Opening a confirmation dialog after clicking Save is
+`changed`, not `complete`; completion is only justified after the confirmation
+UI has closed and visible evidence establishes that the setting was saved.
+
 The output contract is one JSON object, such as:
 
 ```json

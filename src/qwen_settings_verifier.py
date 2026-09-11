@@ -1,37 +1,8 @@
-import json
 import time
 
 import torch
 from qwen_vl_utils import process_vision_info
-
-
-def build_verifier_prompt(goal, requested_action):
-    return f"""
-You verify a GUI Agent action using only two screenshots.
-
-Goal:
-{goal}
-
-Requested action:
-{json.dumps(requested_action)}
-
-The first image is BEFORE the action. The second image is AFTER the action.
-
-Classify the current result:
-- complete: the AFTER image visibly shows the full goal is completed and saved.
-- changed: the action caused visible progress, but the full goal is not yet complete.
-- no_effect: the relevant GUI state did not visibly change.
-- uncertain: the screenshots do not provide enough evidence for another label.
-
-Use only visible evidence. You cannot access DOM state, test IDs, execution logs,
-or the hidden evaluator. Do not assume a requested click succeeded.
-
-Return exactly one JSON object and no other text:
-{{"status": "complete"}}
-{{"status": "changed"}}
-{{"status": "no_effect"}}
-{{"status": "uncertain"}}
-""".strip()
+from src.verifier_prompt import build_verifier_prompt
 
 
 class QwenSettingsVerifier:

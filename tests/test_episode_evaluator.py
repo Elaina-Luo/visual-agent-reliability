@@ -20,6 +20,7 @@ class EpisodeEvaluatorTests(unittest.TestCase):
         )
 
         self.assertTrue(result["task_state_success"])
+        self.assertFalse(result["termination_signal_emitted"])
         self.assertFalse(result["agent_terminated_correctly"])
         self.assertFalse(result["success"])
 
@@ -31,6 +32,7 @@ class EpisodeEvaluatorTests(unittest.TestCase):
         )
 
         self.assertTrue(result["task_state_success"])
+        self.assertTrue(result["termination_signal_emitted"])
         self.assertTrue(result["agent_terminated_correctly"])
         self.assertTrue(result["success"])
 
@@ -46,7 +48,8 @@ class EpisodeEvaluatorTests(unittest.TestCase):
         )
 
         self.assertFalse(result["task_state_success"])
-        self.assertTrue(result["agent_terminated_correctly"])
+        self.assertTrue(result["termination_signal_emitted"])
+        self.assertFalse(result["agent_terminated_correctly"])
         self.assertFalse(result["success"])
 
     def test_verifier_can_terminate_completed_episode(self):
@@ -57,8 +60,27 @@ class EpisodeEvaluatorTests(unittest.TestCase):
         )
 
         self.assertTrue(result["task_state_success"])
+        self.assertTrue(result["termination_signal_emitted"])
         self.assertTrue(result["agent_terminated_correctly"])
         self.assertTrue(result["success"])
+
+    def test_premature_verifier_completion_is_not_correct_termination(self):
+        incomplete_state = {
+            **self.completed_state,
+            "saved": {"density": "comfortable"},
+            "has_unapplied_changes": True,
+            "confirmation_visible": True,
+        }
+        result = evaluate_episode(
+            incomplete_state,
+            self.task,
+            "verifier_complete",
+        )
+
+        self.assertFalse(result["task_state_success"])
+        self.assertTrue(result["termination_signal_emitted"])
+        self.assertFalse(result["agent_terminated_correctly"])
+        self.assertFalse(result["success"])
 
 
 if __name__ == "__main__":
