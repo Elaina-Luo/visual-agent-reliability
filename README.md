@@ -19,6 +19,20 @@ separately.
 > interaction, and when do post-action verification and bounded recovery help
 > rather than introduce new failures?
 
+## Current findings
+
+- On a fixed 128-example ScreenSpot subset, input-resolution capping reduced
+  GUI-grounding accuracy by 10.94 percentage points while avoiding the single
+  native-resolution GPU OOM observed in this sample.
+- Controlled agent traces show that correct GUI state and correct termination
+  are distinct reliability problems: an Agent can complete the requested state
+  change but fail to recognize completion.
+- Early failure analysis suggests that verification is not inherently
+  beneficial: false-negative verification can trigger unnecessary recovery
+  and reverse correct progress.
+
+The final B0/B1/B2 comparison and Goal-Progress Verifier benchmark are ongoing.
+
 ## Part A — ScreenSpot grounding
 
 Each benchmark example contains a GUI screenshot, a natural-language
@@ -38,9 +52,8 @@ resolution.
 | Native resolution | 89 | 30 | 8 | 1 | **69.53%** | 92.97% |
 | Capped resolution | 75 | 44 | 9 | 0 | **58.59%** | 92.97% |
 
-Resolution capping removed the single native-resolution inference error (a GPU
-out-of-memory failure), but reduced grounding accuracy by 10.94 percentage
-points. Coordinate predictions from resized images were mapped back to the
+Resolution capping avoided the single native-resolution GPU OOM observed in
+this sample, but reduced grounding accuracy by 10.94 percentage points. Coordinate predictions from resized images were mapped back to the
 correct coordinate system before evaluation; this correction was performed
 offline without rerunning model inference.
 
@@ -115,6 +128,10 @@ implements the current bounded-recovery strategy. Hidden evaluator state is
 written only for offline audit and is never included in an Actor or Verifier
 prompt. See the [agent protocol](docs/agent_protocol.md) for the baseline
 boundary.
+
+B1 is an observational ablation: verification is evaluated without influencing
+the Actor. B2 then tests the causal effect of allowing verification signals to
+change behavior through bounded recovery.
 
 ### Development smoke results
 
