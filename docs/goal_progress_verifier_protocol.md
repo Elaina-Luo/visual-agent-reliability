@@ -19,7 +19,10 @@ can establish that a screen changed, but cannot establish whether that change
 was useful. The distinction is evaluated relative to the natural-language
 goal rather than a particular coordinate, control type, or Settings task.
 
-The current patch defines and tests the protocol without connecting it to the
-Agent loop. This preserves the existing B0 and B1 ablation entry points. Loop
-integration and recovery behavior will be evaluated separately after the
-model's protocol outputs have been inspected.
+The protocol is evaluated in shadow mode before it controls the Agent loop.
+`run_progress_verifier_shadow.py` replays executed transitions from a saved
+episode and writes `progress_shadow.json` beside the original result. Hidden
+Settings state is consulted only after each model call to create an offline
+oracle label; it is never included in the model prompt. The original B0 and B1
+entry points and result files remain unchanged. Loop integration and recovery
+behavior will be evaluated separately after shadow predictions are inspected.
