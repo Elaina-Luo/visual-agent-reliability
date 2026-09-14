@@ -139,6 +139,18 @@ one visually ineffective click and terminate on visually verified completion.
 Retries count against the eight-action budget; pixel-change measurements,
 Verifier calls, and latency are recorded.
 
+Generate the balanced 15-transition Settings pilot and evaluate the frozen
+zero-shot Goal-Progress Verifier without letting it control the Agent:
+
+```bash
+python generate_progress_transition_dataset.py
+python run_progress_transition_benchmark.py
+```
+
+The benchmark reports overall and per-class metrics and saves the complete
+predictions plus CSV/PNG confusion matrices. Hidden Settings state is isolated
+in the dataset's audit manifest and is never included in model input.
+
 See the [Settings App task specification](docs/settings_task_spec.md) for the
 observation, action, success, and hidden-information contract.
 

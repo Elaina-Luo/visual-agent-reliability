@@ -48,3 +48,14 @@ python generate_progress_transition_dataset.py
 
 This is a controlled Settings-specific evaluation set, not evidence that the
 label protocol generalizes to arbitrary applications.
+
+Run the frozen `P0_zero_shot_v1` prompt over the dataset:
+
+```bash
+python run_progress_transition_benchmark.py
+```
+
+The runner checkpoints after every sample and supports `--resume`. It writes
+the full predictions and metrics to `progress_benchmark_p0.json`, plus a CSV
+and PNG confusion matrix. The five reference labels are rows; `uncertain` is
+preserved as a sixth prediction column rather than silently discarded.

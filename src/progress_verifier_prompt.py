@@ -1,6 +1,9 @@
 import json
 
 
+PROGRESS_PROMPT_VERSION = "P0_zero_shot_v1"
+
+
 def build_progress_verifier_prompt(goal, requested_action):
     return f"""
 You evaluate whether one GUI action changed progress toward a task goal.
