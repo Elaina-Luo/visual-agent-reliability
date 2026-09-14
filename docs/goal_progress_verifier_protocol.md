@@ -26,3 +26,25 @@ Settings state is consulted only after each model call to create an offline
 oracle label; it is never included in the model prompt. The original B0 and B1
 entry points and result files remain unchanged. Loop integration and recovery
 behavior will be evaluated separately after shadow predictions are inspected.
+
+## Controlled transition dataset
+
+`generate_progress_transition_dataset.py` creates the first balanced Settings
+App evaluation set. It contains one transition for every combination of the
+three task families and five observable labels: `progress`, `regression`,
+`irrelevant`, `no_effect`, and `complete` (15 samples total).
+
+The generator drives the real page with Playwright and validates every label
+against evaluator state. `manifest.json` contains only the goal, screenshots,
+requested click, and reference label needed for offline evaluation. Hidden
+before/after application states are isolated in `audit_manifest.json` and must
+never be passed to a model.
+
+Generate the dataset without loading Qwen:
+
+```bash
+python generate_progress_transition_dataset.py
+```
+
+This is a controlled Settings-specific evaluation set, not evidence that the
+label protocol generalizes to arbitrary applications.
