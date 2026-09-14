@@ -1,16 +1,23 @@
 # Reliable Visual Agents
 
-Benchmarking GUI grounding, inference failures, and eventually action
-verification and recovery.
+Benchmarking GUI grounding, failure detection, and bounded recovery.
 
-This undergraduate research project asks how visual input constraints affect
-both the accuracy and execution reliability of a vision-language model (VLM),
-then extends the evaluation into a controlled visual-agent environment.
+This undergraduate research project studies where vision-language-model (VLM)
+agents fail during GUI interaction and whether explicit post-action
+verification and bounded recovery improve reliability. It combines an external
+GUI-grounding benchmark with a controlled browser environment in which task
+state, termination, injected faults, and recovery cost can be measured
+separately.
 
-## Research question
+## Research questions
 
-> How does resolution capping change GUI-grounding accuracy and inference
-> reliability, and which target categories are most affected?
+> **Grounding:** How does input-resolution capping change GUI-grounding
+> accuracy and inference reliability, and which target categories are most
+> affected?
+>
+> **Agent reliability:** Why do visual agents fail during multi-step GUI
+> interaction, and when do post-action verification and bounded recovery help
+> rather than introduce new failures?
 
 ## Part A — ScreenSpot grounding
 
@@ -90,11 +97,46 @@ while leaving navigation and submission actions unaffected. Scripted checks
 compare no retry against one repeated setting click; they validate the fault
 mechanism, not autonomous Agent recovery.
 
-The B0 reactive runner uses Qwen2.5-VL-3B-Instruct as a screenshot-to-action
-policy. It executes an eight-step `observe → decide → act → observe` loop and
-saves screenshots, raw model outputs, parsed actions, hidden execution audits,
-and the final result. See the [agent protocol](docs/agent_protocol.md) for the
-baseline boundary.
+### Experimental strategies
+
+All strategies use the same Qwen2.5-VL-3B-Instruct model, click-only action
+space, task distribution, and eight-action budget. Retries count as actions;
+Verifier calls and latency are reported rather than treated as free.
+
+| Strategy | Added mechanism | Purpose |
+| --- | --- | --- |
+| **B0 — Reactive** | Screenshot-to-action Actor only | Establish the no-verification baseline |
+| **B1 — Verification** | Semantic before/after judgment plus deterministic pixel-change detection | Measure whether an action had a visible effect without changing policy in shadow evaluation |
+| **B2 — Verification + bounded recovery** | At most one no-effect retry, completion gate, and repeated-click guard | Test whether constrained recovery improves completion without unbounded action loops |
+
+`run_settings_agent.py` implements B0. The verification components can be
+evaluated in shadow mode on saved traces; `run_settings_verified_agent.py`
+implements the current bounded-recovery strategy. Hidden evaluator state is
+written only for offline audit and is never included in an Actor or Verifier
+prompt. See the [agent protocol](docs/agent_protocol.md) for the baseline
+boundary.
+
+### Development smoke results
+
+The initial three no-fault B0 episodes are development cases, not a final
+statistical comparison:
+
+| Metric | Result |
+| --- | ---: |
+| Full task-and-termination success | 0/3 |
+| Correct final GUI task state | 1/3 |
+| Correct termination | 0/3 |
+
+These runs motivated separating task-state success from correct termination
+instead of reporting one ambiguous success flag.
+
+### Observed failure cases
+
+| Failure | Trace evidence | Reliability implication |
+| --- | --- | --- |
+| **Termination failure** | The Compact setting was saved with no unapplied changes, but the Actor continued until its action budget was exhausted. | Reaching the requested GUI state does not guarantee that an Agent knows when to stop. |
+| **Repeated-action loop** | After correctly turning off Sound alerts, the Actor repeatedly clicked the same switch, reversed progress, and never saved. | Grounding the correct control is insufficient without state-change and progress tracking. |
+| **False-negative verification** | Hidden offline audit recorded `comfortable → compact`, while the visual Verifier classified the click as `no_effect` and triggered an unnecessary retry. | A noisy Verifier can make bounded recovery less reliable rather than more reliable. |
 
 Start the environment:
 
@@ -127,29 +169,42 @@ After the normal smoke test is inspected, run one dropped-click episode:
 python run_settings_agent.py --seed 1 --fault-mode drop_first_setting_change
 ```
 
-Run the B1 visual-verification strategy with the same task and action budget:
+Run the bounded visual-verification strategy with the same task and action
+budget:
 
 ```bash
 python run_settings_verified_agent.py --seed 0 --fault-mode none
 ```
 
-B1 reuses the Actor's loaded Qwen model as a separate semantic Verifier and
+B2 reuses the Actor's loaded Qwen model as a separate semantic Verifier and
 combines it with deterministic screenshot-difference detection. It can retry
-one visually ineffective click and terminate on visually verified completion.
-Retries count against the eight-action budget; pixel-change measurements,
-Verifier calls, and latency are recorded.
+one visually ineffective click and terminate through an independent completion
+gate. Pixel-change measurements, blocked repeats, Verifier calls, and latency
+are recorded.
+
+### Goal-progress benchmark — ongoing
+
+Pixel difference can establish that the screen changed, but not whether the
+change was progress, regression, or irrelevant. A separate Goal-Progress
+Verifier therefore predicts one of `progress`, `regression`, `irrelevant`,
+`no_effect`, `complete`, or `uncertain` from the goal, requested click, and
+before/after screenshots.
 
 Generate the balanced 15-transition Settings pilot and evaluate the frozen
-zero-shot Goal-Progress Verifier without letting it control the Agent:
+`P0_zero_shot_v1` prompt without letting it control the Agent:
 
 ```bash
 python generate_progress_transition_dataset.py
 python run_progress_transition_benchmark.py
 ```
 
-The benchmark reports overall and per-class metrics and saves the complete
-predictions plus CSV/PNG confusion matrices. Hidden Settings state is isolated
-in the dataset's audit manifest and is never included in model input.
+The controlled pilot contains three task families and three examples per
+reference label (`progress`, `regression`, `irrelevant`, `no_effect`, and
+`complete`). The runner reports overall and per-class metrics and saves the
+complete predictions plus CSV/PNG confusion matrices. Hidden Settings state is
+isolated in the dataset's audit manifest and is never included in model input.
+The dataset and evaluator are complete; valid GPU inference and analysis are
+ongoing, so no Goal-Progress accuracy is reported yet.
 
 See the [Settings App task specification](docs/settings_task_spec.md) for the
 observation, action, success, and hidden-information contract.
@@ -161,7 +216,7 @@ environment/   Simple regression task and realistic Settings App for Part B
 experiments/   Colab VLM inference notebook
 results/       Frozen manifest, predictions, tables, and figures
 src/           Dataset inspection, evaluation, sanity checks, and plotting
-tests/         Lightweight parser tests
+tests/         Unit tests for protocols, policies, metrics, and evaluators
 docs/          Research scope and checkpoints
 ```
 
@@ -171,7 +226,12 @@ docs/          Research scope and checkpoints
 - A 128-example stratified pilot, not the full benchmark.
 - Descriptive subgroup comparisons without confidence intervals yet.
 - Capped-resolution results depend on correct preprocessing-coordinate mapping.
-- Part B failure detection and recovery experiments are not complete.
+- The three B0 episodes are development smoke tests rather than a held-out
+  statistical evaluation.
+- The 15-transition Goal-Progress set is a small Settings-specific pilot and
+  does not establish cross-application generalization.
+- The final B0/B1/B2 comparison and valid Goal-Progress GPU benchmark remain
+  ongoing.
 
 See the [research plan](docs/research_plan.md) for the current checkpoints and
 scope boundary.
