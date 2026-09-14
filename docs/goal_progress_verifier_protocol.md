@@ -1,0 +1,25 @@
+# Goal-Progress Verifier protocol
+
+The Goal-Progress Verifier is a separate experimental role for distinguishing
+the direction of an observed GUI transition. It receives only the task goal,
+requested action, before screenshot, and after screenshot. It never receives
+DOM state, test IDs, fault flags, execution status, or evaluator state.
+
+The strict output schema contains one `status` field:
+
+- `complete`: the full goal is visibly completed and saved;
+- `progress`: the transition visibly moved closer to the goal;
+- `regression`: the transition undid progress or moved farther from the goal;
+- `irrelevant`: the screen changed without meaningful goal progress;
+- `no_effect`: the action produced no visible interface effect; or
+- `uncertain`: visible evidence cannot support another label.
+
+This protocol addresses a limitation of pixel-change fusion: pixel difference
+can establish that a screen changed, but cannot establish whether that change
+was useful. The distinction is evaluated relative to the natural-language
+goal rather than a particular coordinate, control type, or Settings task.
+
+The current patch defines and tests the protocol without connecting it to the
+Agent loop. This preserves the existing B0 and B1 ablation entry points. Loop
+integration and recovery behavior will be evaluated separately after the
+model's protocol outputs have been inspected.
