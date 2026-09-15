@@ -59,3 +59,17 @@ The runner checkpoints after every sample and supports `--resume`. It writes
 the full predictions and metrics to `progress_benchmark_p0.json`, plus a CSV
 and PNG confusion matrix. The five reference labels are rows; `uncertain` is
 preserved as a sixth prediction column rather than silently discarded.
+
+The `P1_goal_state_comparison_v1` ablation keeps the model, images, label
+schema, and decoding settings fixed while adding an explicit comparison of
+goal conditions in the before and after states:
+
+```bash
+python run_progress_transition_benchmark.py \
+  --prompt-version P1_goal_state_comparison_v1
+```
+
+P1 writes separate `progress_benchmark_p1.json` and `*_p1` confusion-matrix
+artifacts, so it cannot overwrite P0. Because P1 was designed after inspecting
+P0 errors on these 15 transitions, this comparison is a development-set prompt
+ablation rather than a held-out generalization result.

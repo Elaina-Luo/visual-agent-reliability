@@ -4,6 +4,7 @@ from src.progress_verifier_parser import (
     parse_progress_verification,
 )
 from src.progress_verifier_prompt import (
+    P1_PROMPT_VERSION,
     build_progress_verifier_prompt,
 )
 
@@ -29,6 +30,27 @@ class ProgressVerifierTests(unittest.TestCase):
         self.assertIn("completed and\n  saved", prompt)
         self.assertIn("confirmation dialog is progress", prompt)
         self.assertIn("task is not complete", prompt)
+
+    def test_p1_uses_explicit_goal_state_comparison(self):
+        prompt = build_progress_verifier_prompt(
+            "Turn off Sound alerts and save the changes.",
+            {"type": "click", "x": 877, "y": 298},
+            prompt_version=P1_PROMPT_VERSION,
+        )
+
+        self.assertIn("Decompose the goal", prompt)
+        self.assertIn("satisfied in BEFORE", prompt)
+        self.assertIn("satisfied in AFTER", prompt)
+        self.assertIn("priority order", prompt)
+        self.assertIn("context only", prompt)
+
+    def test_unknown_prompt_version_is_rejected(self):
+        with self.assertRaises(ValueError):
+            build_progress_verifier_prompt(
+                "Save the changes.",
+                {"type": "click", "x": 1, "y": 2},
+                prompt_version="unknown",
+            )
 
     def test_parses_each_valid_status(self):
         statuses = (

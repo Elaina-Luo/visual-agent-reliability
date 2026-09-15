@@ -10,7 +10,11 @@ from src.progress_benchmark_metrics import (
     write_confusion_csv,
 )
 from src.progress_verifier_parser import parse_progress_verification
-from src.progress_verifier_prompt import PROGRESS_PROMPT_VERSION
+from src.progress_verifier_prompt import (
+    P0_PROMPT_VERSION,
+    P1_PROMPT_VERSION,
+    PROGRESS_PROMPT_VERSIONS,
+)
 from src.qwen_progress_verifier import QwenProgressVerifier
 from src.qwen_settings_agent import DEFAULT_MODEL_ID, QwenSettingsAgent
 
@@ -34,11 +38,12 @@ def load_existing_records(
     resume,
     dataset_name,
     model_id,
+    prompt_version,
 ):
     if not resume or not output_path.exists():
         return []
     result = json.loads(output_path.read_text(encoding="utf-8"))
-    if result.get("prompt_version") != PROGRESS_PROMPT_VERSION:
+    if result.get("prompt_version") != prompt_version:
         raise ValueError("Cannot resume results from another prompt version")
     if result.get("dataset") != dataset_name:
         raise ValueError("Cannot resume results from another dataset")
@@ -53,7 +58,7 @@ def build_result(manifest_path, manifest, verifier, records):
         "dataset": manifest["dataset"],
         "source_manifest": str(manifest_path),
         "model_id": verifier.model_id,
-        "prompt_version": PROGRESS_PROMPT_VERSION,
+        "prompt_version": verifier.prompt_version,
         "mode": "offline_shadow_no_policy_control",
         "evaluated_samples": len(records),
         "total_samples": manifest["sample_count"],
@@ -80,6 +85,7 @@ def evaluate_manifest(manifest_path, verifier, output_path, resume=False):
         resume,
         manifest["dataset"],
         verifier.model_id,
+        verifier.prompt_version,
     )
     completed_ids = {record["sample_id"] for record in records}
 
@@ -138,6 +144,11 @@ def main():
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--model-id", default=DEFAULT_MODEL_ID)
+    parser.add_argument(
+        "--prompt-version",
+        choices=PROGRESS_PROMPT_VERSIONS,
+        default=P0_PROMPT_VERSION,
+    )
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
 
@@ -145,15 +156,22 @@ def main():
     output_path = (
         args.output.resolve()
         if args.output
-        else manifest_path.with_name("progress_benchmark_p0.json")
+        else manifest_path.with_name(
+            "progress_benchmark_p1.json"
+            if args.prompt_version == P1_PROMPT_VERSION
+            else "progress_benchmark_p0.json"
+        )
     )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     print("Dataset:", manifest_path)
     print("Mode: offline shadow; no actions or recovery decisions")
-    print("Prompt:", PROGRESS_PROMPT_VERSION)
+    print("Prompt:", args.prompt_version)
     print("Loading model:", args.model_id)
     actor = QwenSettingsAgent(args.model_id)
-    verifier = QwenProgressVerifier(actor)
+    verifier = QwenProgressVerifier(
+        actor,
+        prompt_version=args.prompt_version,
+    )
     result = evaluate_manifest(
         manifest_path,
         verifier,
@@ -161,8 +179,13 @@ def main():
         resume=args.resume,
     )
 
-    matrix_path = output_path.with_name("progress_confusion_matrix.csv")
-    figure_path = output_path.with_name("progress_confusion_matrix.png")
+    prompt_tag = "p1" if args.prompt_version == P1_PROMPT_VERSION else "p0"
+    matrix_path = output_path.with_name(
+        f"progress_confusion_matrix_{prompt_tag}.csv"
+    )
+    figure_path = output_path.with_name(
+        f"progress_confusion_matrix_{prompt_tag}.png"
+    )
     write_confusion_csv(result["metrics"]["confusion_matrix"], matrix_path)
     plot_confusion_matrix(
         result["metrics"]["confusion_matrix"],

@@ -4,6 +4,7 @@ import torch
 from qwen_vl_utils import process_vision_info
 
 from src.progress_verifier_prompt import (
+    PROGRESS_PROMPT_VERSION,
     build_progress_verifier_prompt,
 )
 
@@ -11,13 +12,18 @@ from src.progress_verifier_prompt import (
 class QwenProgressVerifier:
     """A goal-progress role that reuses the Actor's loaded Qwen model."""
 
-    def __init__(self, actor):
+    def __init__(self, actor, prompt_version=PROGRESS_PROMPT_VERSION):
         self.model_id = actor.model_id
         self.processor = actor.processor
         self.model = actor.model
+        self.prompt_version = prompt_version
 
     def verify(self, before_image, after_image, goal, requested_action):
-        prompt = build_progress_verifier_prompt(goal, requested_action)
+        prompt = build_progress_verifier_prompt(
+            goal,
+            requested_action,
+            prompt_version=self.prompt_version,
+        )
         messages = [
             {
                 "role": "user",
