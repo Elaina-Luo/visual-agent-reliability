@@ -73,3 +73,13 @@ P1 writes separate `progress_benchmark_p1.json` and `*_p1` confusion-matrix
 artifacts, so it cannot overwrite P0. Because P1 was designed after inspecting
 P0 errors on these 15 transitions, this comparison is a development-set prompt
 ablation rather than a held-out generalization result.
+
+Compare P0 and P1 without loading a model or using a GPU:
+
+```bash
+python compare_progress_prompt_results.py
+```
+
+The paired analysis reports which samples improved, worsened, remained
+correct, or remained wrong. It writes `progress_prompt_comparison.json` and
+`progress_prompt_comparison.csv` beside the two benchmark result files.
