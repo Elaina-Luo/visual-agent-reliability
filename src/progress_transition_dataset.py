@@ -10,20 +10,29 @@ PROGRESS_LABELS = (
 )
 
 
-UNRELATED_CONTROLS = {
-    "appearance": {
-        "kind": "segment_alternative",
-        "key": "theme",
-        "values": ("light", "dark"),
-    },
-    "notifications": {
-        "kind": "switch",
-        "key": "push_notifications",
-    },
-    "privacy": {
-        "kind": "switch",
-        "key": "crash_reports",
-    },
+SECTION_CONTROLS = {
+    "appearance": (
+        {
+            "kind": "segment_alternative",
+            "key": "theme",
+            "values": ("light", "dark", "system"),
+        },
+        {
+            "kind": "segment_alternative",
+            "key": "density",
+            "values": ("compact", "comfortable"),
+        },
+    ),
+    "notifications": (
+        {"kind": "switch", "key": "push_notifications"},
+        {"kind": "switch", "key": "sound_alerts"},
+        {"kind": "switch", "key": "weekly_summary"},
+    ),
+    "privacy": (
+        {"kind": "switch", "key": "analytics_sharing"},
+        {"kind": "switch", "key": "crash_reports"},
+        {"kind": "switch", "key": "activity_history"},
+    ),
 }
 
 
@@ -66,13 +75,23 @@ def target_selector(task):
 
 
 def regression_selector(task):
-    if task["target_key"] == "density":
-        return '[data-control="density"] [data-value="comfortable"]'
+    target_key = task["target_key"]
+    target_value = task["target_value"]
+    if not isinstance(target_value, bool):
+        initial_value = task["initial_state"][target_key]
+        return (
+            f'[data-control="{target_key}"] '
+            f'[data-value="{initial_value}"]'
+        )
     return target_selector(task)
 
 
 def unrelated_selector(task, current_draft):
-    control = UNRELATED_CONTROLS[task["section"]]
+    control = next(
+        candidate
+        for candidate in SECTION_CONTROLS[task["section"]]
+        if candidate["key"] != task["target_key"]
+    )
     if control["kind"] == "switch":
         return f'.switch[data-key="{control["key"]}"]'
 

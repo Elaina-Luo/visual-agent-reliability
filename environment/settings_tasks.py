@@ -13,6 +13,12 @@ DEFAULT_SETTINGS = {
 }
 
 
+ENUM_VALUES = {
+    "theme": ("light", "dark", "system"),
+    "density": ("compact", "comfortable"),
+}
+
+
 TASK_SPECS = [
     {
         "section": "appearance",
@@ -35,6 +41,27 @@ TASK_SPECS = [
         "goal": "Open Privacy, turn off Analytics sharing, and save the changes.",
         "control_test_id": "analytics-sharing",
     },
+    {
+        "section": "appearance",
+        "target_key": "theme",
+        "target_value": "dark",
+        "goal": "Open Appearance, select Dark theme, and save the changes.",
+        "control_test_id": "theme-dark",
+    },
+    {
+        "section": "notifications",
+        "target_key": "weekly_summary",
+        "target_value": True,
+        "goal": "Open Notifications, turn on Weekly summary, and save the changes.",
+        "control_test_id": "weekly-summary",
+    },
+    {
+        "section": "privacy",
+        "target_key": "activity_history",
+        "target_value": False,
+        "goal": "Open Privacy, turn off Activity history, and save the changes.",
+        "control_test_id": "activity-history",
+    },
 ]
 
 
@@ -52,8 +79,12 @@ def generate_settings_task(seed: int) -> dict:
     target_value = spec["target_value"]
     if isinstance(target_value, bool):
         initial_state[target_key] = not target_value
-    elif target_key == "density":
-        initial_state[target_key] = "comfortable"
+    else:
+        initial_state[target_key] = next(
+            value
+            for value in ENUM_VALUES[target_key]
+            if value != target_value
+        )
 
     return {
         "seed": seed,

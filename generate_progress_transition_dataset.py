@@ -19,6 +19,18 @@ from src.settings_executor import wait_for_render
 
 PROJECT_DIR = Path(__file__).resolve().parent
 VIEWPORT = {"width": 980, "height": 644}
+SPLITS = {
+    "development": {
+        "seeds": range(3),
+        "directory": "progress_transition_dataset_v1",
+        "dataset": "settings_goal_progress_controlled_v1",
+    },
+    "heldout": {
+        "seeds": range(3, 6),
+        "directory": "progress_transition_heldout_v1",
+        "dataset": "settings_goal_progress_control_heldout_v1",
+    },
+}
 
 
 def evaluation_state(page):
@@ -113,7 +125,7 @@ def generate_sample(page, output_dir, spec):
     return public_record, audit_record
 
 
-def generate_dataset(page, output_dir, tasks):
+def generate_dataset(page, output_dir, tasks, dataset_name):
     specs = build_transition_specs(tasks)
     counts = validate_balanced_specs(specs)
     records = []
@@ -124,7 +136,7 @@ def generate_dataset(page, output_dir, tasks):
         audit_records.append(audit_record)
 
     manifest = {
-        "dataset": "settings_goal_progress_controlled_v1",
+        "dataset": dataset_name,
         "labels": list(counts),
         "samples_per_label": next(iter(counts.values())),
         "sample_count": len(records),
@@ -148,17 +160,24 @@ def generate_dataset(page, output_dir, tasks):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "--split",
+        choices=tuple(SPLITS),
+        default="development",
+    )
+    parser.add_argument(
         "--output-dir",
         type=Path,
-        default=(
-            PROJECT_DIR / "artifacts" / "progress_transition_dataset_v1"
-        ),
     )
     parser.add_argument("--headed", action="store_true")
     args = parser.parse_args()
-    output_dir = args.output_dir.resolve()
+    split = SPLITS[args.split]
+    output_dir = (
+        args.output_dir.resolve()
+        if args.output_dir
+        else (PROJECT_DIR / "artifacts" / split["directory"]).resolve()
+    )
     output_dir.mkdir(parents=True, exist_ok=True)
-    tasks = [generate_settings_task(seed) for seed in range(3)]
+    tasks = [generate_settings_task(seed) for seed in split["seeds"]]
 
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=not args.headed)
@@ -169,7 +188,12 @@ def main():
         page.goto(
             (PROJECT_DIR / "environment" / "settings.html").as_uri()
         )
-        manifest = generate_dataset(page, output_dir, tasks)
+        manifest = generate_dataset(
+            page,
+            output_dir,
+            tasks,
+            dataset_name=split["dataset"],
+        )
         browser.close()
 
     print("Dataset:", manifest["dataset"])

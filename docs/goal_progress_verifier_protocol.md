@@ -83,3 +83,33 @@ python compare_progress_prompt_results.py
 The paired analysis reports which samples improved, worsened, remained
 correct, or remained wrong. It writes `progress_prompt_comparison.json` and
 `progress_prompt_comparison.csv` beside the two benchmark result files.
+
+## Control-held-out evaluation
+
+After P0 and P1 are frozen, generate a second balanced set whose target
+controls do not appear in the development set:
+
+```bash
+python generate_progress_transition_dataset.py --split heldout
+```
+
+The held-out targets are Dark theme, Weekly summary, and Activity history.
+This preserves the Settings App, label ontology, and rendering pipeline while
+holding out the target controls and goal wording used during prompt
+development. It measures within-application transfer, not generalization to
+unseen applications.
+
+Evaluate both frozen prompts by passing the held-out manifest explicitly:
+
+```bash
+python run_progress_transition_benchmark.py \
+  --manifest artifacts/progress_transition_heldout_v1/manifest.json
+python run_progress_transition_benchmark.py \
+  --manifest artifacts/progress_transition_heldout_v1/manifest.json \
+  --prompt-version P1_goal_state_comparison_v1
+python compare_progress_prompt_results.py \
+  --baseline artifacts/progress_transition_heldout_v1/progress_benchmark_p0.json \
+  --candidate artifacts/progress_transition_heldout_v1/progress_benchmark_p1.json \
+  --output-json artifacts/progress_transition_heldout_v1/progress_prompt_comparison.json \
+  --output-csv artifacts/progress_transition_heldout_v1/progress_prompt_comparison.csv
+```

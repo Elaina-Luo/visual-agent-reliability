@@ -57,6 +57,47 @@ class ProgressTransitionDatasetTests(unittest.TestCase):
         self.assertIn('data-key="push_notifications"', selector)
         self.assertNotIn("sound_alerts", selector)
 
+    def test_heldout_tasks_use_distinct_target_controls(self):
+        heldout_tasks = [generate_settings_task(seed) for seed in range(3, 6)]
+
+        self.assertEqual(
+            {task["target_key"] for task in heldout_tasks},
+            {"theme", "weekly_summary", "activity_history"},
+        )
+        self.assertTrue(
+            {task["target_key"] for task in heldout_tasks}.isdisjoint(
+                {task["target_key"] for task in self.tasks}
+            )
+        )
+
+    def test_heldout_targets_require_state_changes(self):
+        for seed in range(3, 6):
+            task = generate_settings_task(seed)
+            with self.subTest(seed=seed):
+                self.assertNotEqual(
+                    task["initial_state"][task["target_key"]],
+                    task["target_value"],
+                )
+
+    def test_segment_regression_returns_to_initial_value(self):
+        theme_task = generate_settings_task(3)
+
+        selector = regression_selector(theme_task)
+
+        self.assertIn('data-control="theme"', selector)
+        self.assertIn('data-value="light"', selector)
+
+    def test_appearance_heldout_irrelevant_control_is_not_theme(self):
+        theme_task = generate_settings_task(3)
+
+        selector = unrelated_selector(
+            theme_task,
+            theme_task["initial_state"],
+        )
+
+        self.assertIn('data-control="density"', selector)
+        self.assertNotIn('data-control="theme"', selector)
+
 
 if __name__ == "__main__":
     unittest.main()
