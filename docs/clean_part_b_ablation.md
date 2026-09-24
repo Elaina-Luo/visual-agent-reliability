@@ -34,6 +34,29 @@ Repeat across a preregistered seed set and both fault modes (`none` and
 retry counts, action counts, and latency. No empirical success improvement is
 claimed by the unit tests.
 
+For the quantitative run, load the model once and execute 12 seeds (two per
+task family) across both fault modes and all three arms:
+
+```bash
+python run_settings_ablation_batch.py --seeds 0:12 --run-id clean_abc_v1
+```
+
+This creates an isolated directory at
+`artifacts/settings_ablation_runs/clean_abc_v1`. If Colab disconnects, rerun
+the exact command with `--resume`; completed result files are skipped. Never
+reuse a run id without `--resume`. To regenerate tables from saved results:
+
+```bash
+python summarize_settings_ablation.py \
+  artifacts/settings_ablation_runs/clean_abc_v1
+```
+
+The run directory contains `manifest.json`, `episodes.csv`, `aggregate.csv`,
+`paired.csv`, and `summary.json`. The episode table includes false completion
+terminations and false `complete` predictions checked against hidden evaluator
+state. The paired table aligns A/B/C by seed and fault mode. Summaries are
+rewritten after every completed episode so an interrupted run remains usable.
+
 Outputs: `artifacts/settings_agent/<fault>/<task>/result.json` for A;
 `artifacts/settings_clean_B/...` and `artifacts/settings_clean_C/...` for B/C.
 Rerunning the same arm/fault/task overwrites its output; archive independent
