@@ -8,7 +8,10 @@ from transformers import (
     Qwen2_5_VLForConditionalGeneration,
 )
 
-from src.repeat_guard import format_forbidden_region_prompt
+from src.repeat_guard import (
+    format_forbidden_region_prompt,
+    format_forbidden_regions_prompt,
+)
 
 
 DEFAULT_MODEL_ID = "Qwen/Qwen2.5-VL-3B-Instruct"
@@ -22,6 +25,7 @@ def build_reactive_prompt(
     height,
     verification_history=None,
     forbidden_click_region=None,
+    forbidden_click_regions=None,
 ):
     action_history = (
         json.dumps(recent_actions[-4:])
@@ -47,6 +51,10 @@ different action and do not propose that coordinate again.
     forbidden_context = format_forbidden_region_prompt(
         forbidden_click_region
     )
+    if forbidden_click_regions:
+        forbidden_context = format_forbidden_regions_prompt(
+            forbidden_click_regions
+        )
 
     return f"""
 You control a desktop Settings application using only screenshots.
@@ -112,6 +120,7 @@ class QwenSettingsAgent:
         remaining_steps,
         verification_history=None,
         forbidden_click_region=None,
+        forbidden_click_regions=None,
     ):
         width, height = image.size
         prompt = build_reactive_prompt(
@@ -122,6 +131,7 @@ class QwenSettingsAgent:
             height,
             verification_history,
             forbidden_click_region,
+            forbidden_click_regions,
         )
         messages = [
             {

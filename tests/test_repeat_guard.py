@@ -4,6 +4,9 @@ from src.repeat_guard import (
     active_forbidden_click_region,
     format_forbidden_region_prompt,
     should_block_repeated_click,
+    click_in_forbidden_regions,
+    format_forbidden_regions_prompt,
+    remember_changed_click,
 )
 
 
@@ -82,6 +85,35 @@ class RepeatGuardTests(unittest.TestCase):
         self.assertFalse(
             should_block_repeated_click(action, None, None)
         )
+
+    def test_remembers_multiple_changed_regions(self):
+        first = {"type": "click", "x": 878, "y": 298}
+        second = {"type": "click", "x": 850, "y": 583}
+        regions = remember_changed_click([], first, "changed")
+        regions = remember_changed_click(regions, second, "changed")
+
+        self.assertEqual(len(regions), 2)
+        self.assertTrue(click_in_forbidden_regions(first, regions))
+        self.assertTrue(click_in_forbidden_regions(second, regions))
+
+    def test_does_not_remember_no_effect_or_duplicate_click(self):
+        action = {"type": "click", "x": 878, "y": 298}
+        regions = remember_changed_click([], action, "no_effect")
+        self.assertEqual(regions, [])
+        regions = remember_changed_click([], action, "changed")
+        self.assertEqual(
+            remember_changed_click(regions, action, "changed"), regions
+        )
+
+    def test_multi_region_prompt_directs_actor_to_save(self):
+        prompt = format_forbidden_regions_prompt([
+            {"x": 878, "y": 298, "radius": 12},
+            {"x": 878, "y": 370, "radius": 12},
+        ])
+        self.assertIn("(878, 298, radius 12)", prompt)
+        self.assertIn("(878, 370, radius 12)", prompt)
+        self.assertIn("Save, Apply", prompt)
+        self.assertIn("Do not change an unrelated setting", prompt)
 
 
 if __name__ == "__main__":
