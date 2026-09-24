@@ -41,10 +41,13 @@ def run_episode(
     max_blocked_replans=3,
     max_invalid_replans=3,
     output_root=None,
+    strategy="evidence_gated_recovery_v2_1",
+    output_subdir="settings_evidence_gated_agent_v21",
+    action_aware_recovery=False,
 ):
     output_dir = (
         (Path(output_root) if output_root else PROJECT_DIR / "artifacts")
-        / "settings_evidence_gated_agent_v21"
+        / output_subdir
         / fault_mode
         / task["task_id"]
     )
@@ -77,6 +80,7 @@ def run_episode(
                 remaining_steps=max_steps - action_number,
                 verification_history=verification_history,
                 forbidden_click_regions=forbidden_regions,
+                action_aware_recovery=action_aware_recovery,
             )
         except Exception as error:
             trace.append({
@@ -214,7 +218,7 @@ def run_episode(
     evaluation = evaluate_episode(final_state, task, termination_reason)
     result = {
         "model_id": actor.model_id,
-        "strategy": "evidence_gated_recovery_v2_1",
+        "strategy": strategy,
         "fault_mode": fault_mode,
         "fault_triggered": fault_state["triggered"],
         "task": task,
