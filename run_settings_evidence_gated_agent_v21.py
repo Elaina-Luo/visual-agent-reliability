@@ -11,6 +11,7 @@ from run_settings_evidence_gated_agent import (
     execute_verified_click_v2,
 )
 from src.action_parser import parse_agent_action
+from src.constrained_recovery import select_actor_goal
 from src.episode_evaluator import evaluate_episode
 from src.evidence_gated_policy import (
     can_replan,
@@ -45,6 +46,7 @@ def run_episode(
     output_subdir="settings_evidence_gated_agent_v21",
     action_aware_recovery=False,
     repair_redundant_coordinates=False,
+    constrained_recovery_subgoal=False,
 ):
     output_dir = (
         (Path(output_root) if output_root else PROJECT_DIR / "artifacts")
@@ -73,10 +75,14 @@ def run_episode(
         proposal_number += 1
         before_name = f"proposal_{proposal_number:02d}_before.png"
         before_image = capture(page, output_dir, before_name)
+        actor_goal = select_actor_goal(
+            task["goal"], verification_history,
+            enabled=constrained_recovery_subgoal,
+        )
         try:
             raw_output, actor_latency = actor.decide(
                 image=before_image,
-                goal=task["goal"],
+                goal=actor_goal,
                 recent_actions=visible_actions,
                 remaining_steps=max_steps - action_number,
                 verification_history=verification_history,
@@ -87,6 +93,7 @@ def run_episode(
             trace.append({
                 "step": None, "proposal": proposal_number, "source": "actor",
                 "observation_before": before_name, "actor_raw_output": None,
+                "actor_goal": actor_goal,
                 "action": None, "execution_status": "inference_error",
                 "error": f"{type(error).__name__}: {error}",
             })
@@ -112,6 +119,7 @@ def run_episode(
                 "step": None, "proposal": proposal_number,
                 "source": "actor", "observation_before": before_name,
                 "actor_raw_output": raw_output,
+                "actor_goal": actor_goal,
                 "actor_latency_seconds": actor_latency, "action": None,
                 "execution_status": "invalid_action", "error": parse_error,
             })
@@ -137,6 +145,7 @@ def run_episode(
                 "step": action_number, "proposal": proposal_number,
                 "source": "actor", "observation_before": before_name,
                 "actor_raw_output": raw_output,
+                "actor_goal": actor_goal,
                 "actor_latency_seconds": actor_latency, "action": action,
                 "execution_status": "finished", "error": None,
             })
@@ -149,6 +158,7 @@ def run_episode(
                 "step": None, "proposal": proposal_number, "source": "actor",
                 "observation_before": before_name,
                 "actor_raw_output": raw_output,
+                "actor_goal": actor_goal,
                 "actor_latency_seconds": actor_latency, "action": action,
                 "execution_status": "blocked_remembered_region",
                 "verification_status": "repeat_blocked", "error": None,
@@ -168,6 +178,7 @@ def run_episode(
             raw_output, actor_latency,
         )
         trace.append(record)
+        record["actor_goal"] = actor_goal
         status = record["verification_status"]
         completion_sequence = update_completion_sequence(
             completion_sequence, action, status
