@@ -13,6 +13,7 @@ def evaluate_episode(state, task, termination_reason):
     termination_signal_emitted = termination_reason in {
         "agent_finish",
         "verifier_complete",
+        "evidence_confirmed_complete",
     }
     agent_terminated_correctly = (
         termination_signal_emitted and task_state_success

@@ -25,3 +25,21 @@ def should_retry_no_effect(status, retry_already_used, action_budget_remaining):
 
 def can_replan(blocked_replans, max_blocked_replans):
     return blocked_replans < max_blocked_replans
+
+
+def update_completion_sequence(sequence, action, status):
+    """Track consecutive candidates from distinct executed click actions."""
+    if status != "completion_candidate" or action.get("type") != "click":
+        return []
+    candidate = {"x": action["x"], "y": action["y"]}
+    if sequence and sequence[-1] == candidate:
+        return [candidate]
+    return [*sequence[-1:], candidate]
+
+
+def completion_evidence_confirmed(sequence, required_candidates=2):
+    return len(sequence) >= required_candidates
+
+
+def can_retry_invalid(invalid_replans, max_invalid_replans):
+    return invalid_replans < max_invalid_replans

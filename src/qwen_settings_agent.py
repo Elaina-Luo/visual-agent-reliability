@@ -46,6 +46,9 @@ click had no visible effect, the recovery policy may already have retried it.
 A status of repeat_blocked means the proposed click was not executed because
 nearly the same coordinate had just caused a visible change. Choose a
 different action and do not propose that coordinate again.
+A status of invalid_action means your previous JSON was rejected. Correct the
+reported format error. For a click, x and y must each be one integer field;
+never put either coordinate in a list and never add a second action.
 """
 
     forbidden_context = format_forbidden_region_prompt(

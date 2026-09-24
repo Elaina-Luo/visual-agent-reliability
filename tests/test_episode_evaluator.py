@@ -82,6 +82,16 @@ class EpisodeEvaluatorTests(unittest.TestCase):
         self.assertFalse(result["agent_terminated_correctly"])
         self.assertFalse(result["success"])
 
+    def test_evidence_confirmed_completion_is_a_termination_signal(self):
+        result = evaluate_episode(
+            self.completed_state,
+            self.task,
+            "evidence_confirmed_complete",
+        )
+
+        self.assertTrue(result["termination_signal_emitted"])
+        self.assertTrue(result["agent_terminated_correctly"])
+
 
 if __name__ == "__main__":
     unittest.main()
