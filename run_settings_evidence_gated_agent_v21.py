@@ -44,6 +44,7 @@ def run_episode(
     strategy="evidence_gated_recovery_v2_1",
     output_subdir="settings_evidence_gated_agent_v21",
     action_aware_recovery=False,
+    repair_redundant_coordinates=False,
 ):
     output_dir = (
         (Path(output_root) if output_root else PROJECT_DIR / "artifacts")
@@ -97,6 +98,7 @@ def run_episode(
                 raw_output,
                 viewport_width=before_image.width,
                 viewport_height=before_image.height,
+                allow_redundant_coordinate_pair=repair_redundant_coordinates,
             )
             parse_error = None
         except ValueError as error:

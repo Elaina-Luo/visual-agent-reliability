@@ -11,6 +11,7 @@ def parse_agent_action(
     raw_output: str,
     viewport_width: int,
     viewport_height: int,
+    allow_redundant_coordinate_pair: bool = False,
 ) -> dict:
     if not isinstance(raw_output, str):
         raise ValueError("Model output must be text.")
@@ -41,6 +42,12 @@ def parse_agent_action(
     if set(action) == CLICK_KEYS:
         x = action["x"]
         y = action["y"]
+        if allow_redundant_coordinate_pair and isinstance(x, list):
+            if len(x) != 2 or x[1] != y:
+                raise ValueError(
+                    "Redundant Qwen coordinate pair must agree with y."
+                )
+            x = x[0]
     elif set(action) == QWEN_CLICK_KEYS:
         coordinate_pair = action["x"]
         if not isinstance(coordinate_pair, list) or len(coordinate_pair) != 2:
