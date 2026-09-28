@@ -31,7 +31,7 @@ def wilson_interval(successes, trials, z=1.959963984540054):
     return [max(0.0, center - margin), min(1.0, center + margin)]
 
 
-def _reference_state(record, result):
+def reference_state_for_record(record, result):
     # State immediately after the audited action is the primary reference.
     # Finish is a no-op and older traces may omit its state, so before/final
     # state are safe fallbacks in that order.
@@ -55,7 +55,7 @@ def extract_completion_records(results, arms=("B",)):
             verification = trace_record.get("verification")
             if not verification:
                 continue
-            state = _reference_state(trace_record, result)
+            state = reference_state_for_record(trace_record, result)
             if state is None:
                 raise ValueError(
                     f"Missing evaluator state for {task['task_id']} "

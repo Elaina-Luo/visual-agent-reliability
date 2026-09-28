@@ -209,6 +209,20 @@ false negatives. Completion recall was 100%, but precision was only 25.0%
 The conservative control gate therefore failed. The compact audit outputs are
 stored in [`results/part_b_completion_verifier_pilot/`](results/part_b_completion_verifier_pilot/).
 
+The next prompt is evaluated on the same frozen screenshots before it can
+control an Agent:
+
+```bash
+python run_completion_gate_benchmark.py \
+  artifacts/settings_ablation_runs/clean_abc_v1 \
+  --output artifacts/completion_gate_g1.json
+```
+
+`G1_evidence_required_v1` uses a conservative binary decision and requires
+visible evidence of the exact target value, saved state, and no remaining UI
+action. The run is checkpointed with `--resume`; it performs no GUI actions and
+never exposes hidden evaluator state to the model.
+
 ### Observed failure cases
 
 | Failure | Trace evidence | Reliability implication |

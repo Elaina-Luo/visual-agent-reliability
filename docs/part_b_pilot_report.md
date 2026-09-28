@@ -157,3 +157,13 @@ every four completion predictions were premature. Overall accuracy (78.7%) is
 misleading here because non-complete steps dominate the sample. Completion
 precision is the policy-safety metric that explains C's premature stopping.
 The proposed conservative control gate failed.
+
+## Evidence-required follow-up
+
+`run_completion_gate_benchmark.py` provides the next controlled comparison. It
+replays only saved B-arm screenshots, performs no GUI actions, and gives the
+new completion auditor no hidden state or action history. The
+`G1_evidence_required_v1` prompt defaults to pending and requires visible
+evidence of the exact target value, saved state, and absence of remaining UI
+actions. Its predictions must be evaluated on the same frozen 127 samples and
+pass the prospective precision gate before any new Agent-control experiment.

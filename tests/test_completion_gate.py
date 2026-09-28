@@ -1,7 +1,10 @@
 import unittest
 
 from src.completion_gate import gate_completion, parse_completion_gate
-from src.completion_gate_prompt import build_completion_gate_prompt
+from src.completion_gate_prompt import (
+    EVIDENCE_PROMPT_VERSION,
+    build_completion_gate_prompt,
+)
 
 
 class CompletionGateTests(unittest.TestCase):
@@ -43,6 +46,21 @@ class CompletionGateTests(unittest.TestCase):
 
         self.assertIn("a modal or dialog is open", prompt)
         self.assertIn("When evidence is insufficient, use true", prompt)
+
+    def test_evidence_prompt_requires_target_saved_and_no_pending_ui(self):
+        prompt = build_completion_gate_prompt(
+            "Select Compact density and save the changes.",
+            EVIDENCE_PROMPT_VERSION,
+        )
+
+        self.assertIn("exact setting named in the goal", prompt)
+        self.assertIn("visibly saved or committed", prompt)
+        self.assertIn("toast by itself", prompt)
+        self.assertIn("safe default", prompt)
+
+    def test_unknown_prompt_version_is_rejected(self):
+        with self.assertRaises(ValueError):
+            build_completion_gate_prompt("Save changes.", "unknown")
 
 
 if __name__ == "__main__":

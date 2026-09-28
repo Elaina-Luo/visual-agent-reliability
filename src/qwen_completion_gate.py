@@ -3,19 +3,23 @@ import time
 import torch
 from qwen_vl_utils import process_vision_info
 
-from src.completion_gate_prompt import build_completion_gate_prompt
+from src.completion_gate_prompt import (
+    BASELINE_PROMPT_VERSION,
+    build_completion_gate_prompt,
+)
 
 
 class QwenCompletionGate:
     """A final stop check that reuses the Actor's loaded Qwen model."""
 
-    def __init__(self, actor):
+    def __init__(self, actor, prompt_version=BASELINE_PROMPT_VERSION):
         self.model_id = actor.model_id
         self.processor = actor.processor
         self.model = actor.model
+        self.prompt_version = prompt_version
 
     def check(self, image, goal):
-        prompt = build_completion_gate_prompt(goal)
+        prompt = build_completion_gate_prompt(goal, self.prompt_version)
         messages = [
             {
                 "role": "user",
