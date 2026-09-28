@@ -8,8 +8,6 @@ from transformers import (
     Qwen2_5_VLForConditionalGeneration,
 )
 
-from src.action_aware_feedback import build_action_aware_recovery_context
-
 from src.repeat_guard import (
     format_forbidden_region_prompt,
     format_forbidden_regions_prompt,
@@ -28,7 +26,6 @@ def build_reactive_prompt(
     verification_history=None,
     forbidden_click_region=None,
     forbidden_click_regions=None,
-    action_aware_recovery=False,
 ):
     action_history = (
         json.dumps(recent_actions[-4:])
@@ -53,12 +50,6 @@ A status of invalid_action means your previous JSON was rejected. Correct the
 reported format error. For a click, x and y must each be one integer field;
 never put either coordinate in a list and never add a second action.
 """
-
-    recovery_context = ""
-    if action_aware_recovery:
-        recovery_context = build_action_aware_recovery_context(
-            verification_history
-        )
 
     forbidden_context = format_forbidden_region_prompt(
         forbidden_click_region
@@ -85,7 +76,6 @@ Coordinate system:
 Recent actions you previously requested:
 {action_history}
 {verifier_context}
-{recovery_context}
 {forbidden_context}
 
 Remaining action budget: {remaining_steps}
@@ -134,7 +124,6 @@ class QwenSettingsAgent:
         verification_history=None,
         forbidden_click_region=None,
         forbidden_click_regions=None,
-        action_aware_recovery=False,
     ):
         width, height = image.size
         prompt = build_reactive_prompt(
@@ -146,7 +135,6 @@ class QwenSettingsAgent:
             verification_history,
             forbidden_click_region,
             forbidden_click_regions,
-            action_aware_recovery,
         )
         messages = [
             {
