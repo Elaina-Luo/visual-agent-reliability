@@ -27,11 +27,20 @@ separately.
 - Controlled agent traces show that correct GUI state and correct termination
   are distinct reliability problems: an Agent can complete the requested state
   change but fail to recognize completion.
-- Early failure analysis suggests that verification is not inherently
-  beneficial: false-negative verification can trigger unnecessary recovery
-  and reverse correct progress.
+- In the saved 51-episode Part B pilot, the shadow-verification arm matched the
+  no-verification baseline's outcomes while adding about 18 seconds of verifier
+  latency per episode. This validates the intended policy isolation and
+  measures verification cost.
+- The same verifier was unsafe as a controller in this pilot. Of its 36
+  `complete` predictions in shadow mode, 27 (75%) were false against hidden
+  evaluator state. Allowing those signals to stop or retry the Agent reduced
+  task-state success from 4/17 for A and B to 0/17 for C; 10/17 C episodes
+  terminated on false completion.
 
-The final B0/B1/B2 comparison and Goal-Progress Verifier benchmark are ongoing.
+These are diagnostic pilot results from one 3B VLM and 51 of 72 planned
+episodes. They support a concrete failure mechanism, not a general claim that
+verification is harmful. The remaining research question is how to calibrate
+or ground verification before granting it control over policy.
 
 ## Part A — ScreenSpot grounding
 
@@ -110,42 +119,72 @@ while leaving navigation and submission actions unaffected. Scripted checks
 compare no retry against one repeated setting click; they validate the fault
 mechanism, not autonomous Agent recovery.
 
-### Experimental strategies
+### Clean controlled ablation
 
 All strategies use the same Qwen2.5-VL-3B-Instruct model, click-only action
 space, task distribution, and eight-action budget. Retries count as actions;
 Verifier calls and latency are reported rather than treated as free.
 
-| Strategy | Added mechanism | Purpose |
+| Arm | Added mechanism | Purpose |
 | --- | --- | --- |
-| **B0 — Reactive** | Screenshot-to-action Actor only | Establish the no-verification baseline |
-| **B1 — Verification** | Semantic before/after judgment plus deterministic pixel-change detection | Measure whether an action had a visible effect without changing policy in shadow evaluation |
-| **B2 — Verification + bounded recovery** | At most one no-effect retry, completion gate, and repeated-click guard | Test whether constrained recovery improves completion without unbounded action loops |
+| **A — No verification** | Screenshot-to-action Actor only | Establish the policy baseline |
+| **B — Verification only** | Run the visual verifier after every action and record its output | Measure verifier quality and cost without changing Actor behavior |
+| **C — Verification + recovery** | The same verifier may stop on `complete` and retry one `no_effect` action | Measure the causal effect of giving verification limited policy control |
 
-`run_settings_agent.py` implements B0. The verification components can be
-evaluated in shadow mode on saved traces; `run_settings_verified_agent.py`
-implements the current bounded-recovery strategy. Hidden evaluator state is
-written only for offline audit and is never included in an Actor or Verifier
-prompt. See the [agent protocol](docs/agent_protocol.md) for the baseline
-boundary.
+All three clean arms are implemented by `run_settings_agent.py`. A and B use
+the same Actor policy; B's verifier output stays in the trace and cannot stop,
+retry, block, replan, or modify the Actor prompt. C uses the same verifier with
+only two control rules: stop on `complete`, and retry the first `no_effect` at
+most once. Clean B/C contain no repeat guard or forbidden-region replanning.
+The older enhanced strategy remains separately available in
+`run_settings_verified_agent.py` and is not pooled with clean C.
 
-B1 is an observational ablation: verification is evaluated without influencing
-the Actor. B2 then tests the causal effect of allowing verification signals to
-change behavior through bounded recovery.
+Hidden evaluator state is written only for offline audit and is never included
+in an Actor or Verifier prompt. See the [clean ablation protocol](docs/clean_part_b_ablation.md)
+and [agent protocol](docs/agent_protocol.md).
 
-### Development smoke results
+```mermaid
+flowchart LR
+    G[Goal + screenshot] --> A[Actor]
+    A --> X[GUI action]
+    X --> E[Environment]
+    E --> O[New screenshot]
+    O --> A
+    X -. B and C audit .-> V[Visual verifier]
+    V -. B: record only .-> L[Trace and metrics]
+    V -- C: one retry or stop --> E
+    E -. hidden state, offline only .-> S[Evaluator]
+```
 
-The initial three no-fault B0 episodes are development cases, not a final
-statistical comparison:
+### Part B pilot results
 
-| Metric | Result |
-| --- | ---: |
-| Full task-and-termination success | 0/3 |
-| Correct final GUI task state | 1/3 |
-| Correct termination | 0/3 |
+The saved interrupted batch contains 51 of 72 planned episodes: seeds 0-8 for
+the dropped-action condition and seeds 0-7 for the no-fault condition. Results
+are descriptive because the batch is incomplete and uses one model and prompt.
 
-These runs motivated separating task-state success from correct termination
-instead of reporting one ambiguous success flag.
+| Fault mode | Arm | Episodes | Task-state success | Correct termination | False-completion termination | Mean verifier latency |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Dropped first setting change | A | 9 | 22.2% | 22.2% | 0.0% | 0.0 s |
+| Dropped first setting change | B | 9 | 22.2% | 22.2% | 0.0% | 18.5 s |
+| Dropped first setting change | C | 9 | **0.0%** | **0.0%** | **55.6%** | 12.2 s |
+| No fault | A | 8 | 25.0% | 12.5% | 0.0% | 0.0 s |
+| No fault | B | 8 | 25.0% | 12.5% | 0.0% | 18.0 s |
+| No fault | C | 8 | **0.0%** | **0.0%** | **62.5%** | 11.4 s |
+
+Across both conditions, A and B each reached the correct task state in 4/17
+episodes. C reached it in 0/17 and falsely terminated on verifier completion in
+10/17. B recorded 36 `complete` predictions, 27 of which disagreed with hidden
+task state. The key result is therefore sharper than “verification did not
+help”: **an uncalibrated completion signal became a new failure channel when it
+was promoted from observation to control.**
+
+This does not establish that recovery is broadly harmful. It establishes that
+this verifier did not satisfy the precision needed for a termination authority,
+and that recovery evaluation must measure verifier errors against hidden state
+before using them to control an Agent.
+
+The complete interpretation, failure taxonomy, limitations, and next
+experiment are documented in the [Part B pilot report](docs/part_b_pilot_report.md).
 
 ### Observed failure cases
 
@@ -173,31 +212,28 @@ Run the multi-step Settings App check:
 .\.venv\Scripts\python.exe run_settings_scripted.py
 ```
 
-Run one B0 episode in a GPU environment after installing
+Run one clean episode in a GPU environment after installing
 `requirements-agent.txt` and Playwright Chromium:
 
 ```bash
-python run_settings_agent.py --seed 0 --fault-mode none
+python run_settings_agent.py --strategy A --seed 0 --fault-mode none
 ```
 
 After the normal smoke test is inspected, run one dropped-click episode:
 
 ```bash
-python run_settings_agent.py --seed 1 --fault-mode drop_first_setting_change
+python run_settings_agent.py --strategy C --seed 1 --fault-mode drop_first_setting_change
 ```
 
-Run the bounded visual-verification strategy with the same task and action
-budget:
+Run the older enhanced visual-verification strategy separately:
 
 ```bash
 python run_settings_verified_agent.py --seed 0 --fault-mode none
 ```
 
-B2 reuses the Actor's loaded Qwen model as a separate semantic Verifier and
-combines it with deterministic screenshot-difference detection. It can retry
-one visually ineffective click and terminate through an independent completion
-gate. Pixel-change measurements, blocked repeats, Verifier calls, and latency
-are recorded.
+The enhanced strategy combines semantic verification with deterministic
+screenshot-difference detection, one retry, a completion gate, and additional
+replanning guards. Its results must not be labeled as clean C.
 
 ### Goal-progress benchmark — ongoing
 
@@ -243,12 +279,14 @@ docs/          Research scope and checkpoints
 - A 128-example stratified pilot, not the full benchmark.
 - Descriptive subgroup comparisons without confidence intervals yet.
 - Capped-resolution results depend on correct preprocessing-coordinate mapping.
-- The three B0 episodes are development smoke tests rather than a held-out
-  statistical evaluation.
+- The Part B batch is an interrupted 51/72-episode pilot, not a completed
+  held-out statistical evaluation.
+- Part B uses Qwen2.5-VL-3B-Instruct for both Actor and Verifier, so their
+  errors may be correlated.
 - The 15-transition Goal-Progress set is a small Settings-specific pilot and
   does not establish cross-application generalization.
-- The final B0/B1/B2 comparison and valid Goal-Progress GPU benchmark remain
-  ongoing.
+- The full preregistered A/B/C batch and valid Goal-Progress GPU benchmark
+  remain ongoing.
 
 See the [research plan](docs/research_plan.md) for the current checkpoints and
 scope boundary.

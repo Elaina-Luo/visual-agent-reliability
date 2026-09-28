@@ -13,7 +13,6 @@ from src.evidence_gated_policy import (
     evidence_gated_status,
     should_retry_no_effect,
 )
-from src.locator_recovery import parse_locator_output
 from src.repeat_guard import (
     DEFAULT_REPEAT_RADIUS,
     click_in_forbidden_regions,
@@ -130,14 +129,10 @@ def run_episode(
     max_steps=8,
     max_blocked_replans=3,
     output_root=None,
-    locator=None,
-    max_locator_calls=1,
-    strategy="evidence_gated_recovery_v2",
-    output_subdir="settings_evidence_gated_agent_v2",
 ):
     output_dir = (
         (Path(output_root) if output_root else PROJECT_DIR / "artifacts")
-        / output_subdir
+        / "settings_evidence_gated_agent_v2"
         / fault_mode
         / task["task_id"]
     )
@@ -155,10 +150,6 @@ def run_episode(
     proposal_number = 0
     retry_count = 0
     blocked_replans = 0
-    locator_calls = 0
-    locator_executed_actions = 0
-    locator_latency_seconds = 0.0
-    locator_errors = []
 
     while action_number < max_steps:
         proposal_number += 1
@@ -231,89 +222,6 @@ def run_episode(
             verification_history.append({
                 "action": action, "status": "repeat_blocked", "retry": False,
             })
-            if locator is not None and locator_calls < max_locator_calls:
-                locator_calls += 1
-                locator_raw_output = None
-                locator_latency = None
-                locator_action = None
-                locator_error = None
-                try:
-                    locator_raw_output, locator_latency = locator.locate(
-                        image=before_image,
-                        goal=task["goal"],
-                        forbidden_regions=forbidden_regions,
-                    )
-                    locator_action = parse_locator_output(
-                        locator_raw_output,
-                        viewport_width=before_image.width,
-                        viewport_height=before_image.height,
-                    )
-                except Exception as error:
-                    locator_error = f"{type(error).__name__}: {error}"
-                    locator_errors.append(locator_error)
-                if locator_latency is not None:
-                    locator_latency_seconds += locator_latency
-
-                if locator_action is None:
-                    trace.append({
-                        "step": None,
-                        "proposal": proposal_number,
-                        "source": "recovery_locator",
-                        "locator_call": locator_calls,
-                        "observation_before": before_name,
-                        "locator_raw_output": locator_raw_output,
-                        "locator_latency_seconds": locator_latency,
-                        "action": None,
-                        "execution_status": (
-                            "invalid_locator_output"
-                            if locator_error else "locator_unavailable"
-                        ),
-                        "error": locator_error,
-                    })
-                elif click_in_forbidden_regions(
-                    locator_action, forbidden_regions
-                ):
-                    trace.append({
-                        "step": None,
-                        "proposal": proposal_number,
-                        "source": "recovery_locator",
-                        "locator_call": locator_calls,
-                        "observation_before": before_name,
-                        "locator_raw_output": locator_raw_output,
-                        "locator_latency_seconds": locator_latency,
-                        "action": locator_action,
-                        "execution_status": "blocked_locator_action",
-                        "error": None,
-                    })
-                else:
-                    action_number += 1
-                    locator_executed_actions += 1
-                    visible_actions.append(locator_action)
-                    locator_record, _, _ = execute_verified_click_v2(
-                        page, verifier, task, locator_action, before_image,
-                        before_name, output_dir, action_number,
-                        proposal_number, "recovery_locator", fault_mode,
-                        fault_state, locator_raw_output, locator_latency,
-                    )
-                    locator_record["locator_call"] = locator_calls
-                    locator_record["locator_raw_output"] = locator_raw_output
-                    locator_record["locator_latency_seconds"] = locator_latency
-                    trace.append(locator_record)
-                    locator_status = locator_record["verification_status"]
-                    verification_history.append({
-                        "action": locator_action,
-                        "status": locator_status,
-                        "retry": False,
-                        "source": "recovery_locator",
-                        "completion_requires_actor_finish": (
-                            locator_status == "completion_candidate"
-                        ),
-                    })
-                    if locator_status in {"changed", "completion_candidate"}:
-                        forbidden_regions = remember_changed_click(
-                            forbidden_regions, locator_action, "changed"
-                        )
-                    continue
             if not can_replan(blocked_replans, max_blocked_replans):
                 termination_reason = "replan_limit_exhausted"
                 break
@@ -366,7 +274,7 @@ def run_episode(
     evaluation = evaluate_episode(final_state, task, termination_reason)
     result = {
         "model_id": actor.model_id,
-        "strategy": strategy,
+        "strategy": "evidence_gated_recovery_v2",
         "fault_mode": fault_mode,
         "fault_triggered": fault_state["triggered"],
         "task": task,
@@ -377,10 +285,6 @@ def run_episode(
         "retry_count": retry_count,
         "blocked_replans": blocked_replans,
         "max_blocked_replans": max_blocked_replans,
-        "locator_calls": locator_calls,
-        "locator_executed_actions": locator_executed_actions,
-        "locator_latency_seconds": locator_latency_seconds,
-        "locator_errors": locator_errors,
         "forbidden_regions": forbidden_regions,
         "verifier_calls": sum(
             "verification_vlm_status" in record for record in trace

@@ -27,3 +27,27 @@ The next recovery method should be evaluated as a distinct strategy. A useful
 candidate is a locator-only visual recovery call with a minimal prompt and no
 action history. It should be compared against the retained clean A/B/C arms and
 the evidence-gated v2 baseline rather than added as another prompt revision.
+
+## Locator-only follow-up
+
+Commit `5471c4c` tested that candidate as `locator_recovery_v1`. The locator
+shared the loaded Qwen model but received no Actor or verifier history. It was
+called once after the first repeat block.
+
+The locator did not execute an action in either smoke episode because it
+selected a forbidden setting coordinate:
+
+- no-fault seed 1 returned the already changed Sound alerts toggle at
+  `(877, 298)`;
+- dropped-action seed 0 reached the correct saved task state, then returned
+  the old Compact density coordinate at `(752, 295)` instead of terminating.
+
+This rules out action-history contamination as the sole cause in these cases.
+The same 3B VLM remained visually locked on the target setting even under a
+minimal locator prompt. The strategy was removed from the maintained code
+after this bounded test; its implementation remains recoverable from commit
+`5471c4c`.
+
+Future work should treat stronger grounding or a different model as a new
+experimental factor. Further prompt-only recovery variants are not supported
+by the current evidence.
