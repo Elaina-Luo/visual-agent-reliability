@@ -45,6 +45,13 @@ def payload():
 
 
 class CompletionGateBenchmarkTests(unittest.TestCase):
+    def test_empty_run_is_rejected_before_reporting_metrics(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+
+            with self.assertRaisesRegex(ValueError, "No B-arm"):
+                evaluate_samples(root, FakeGate(), root / "result.json")
+
     def test_builds_samples_only_from_selected_shadow_arm(self):
         with tempfile.TemporaryDirectory() as directory:
             run_dir = Path(directory)

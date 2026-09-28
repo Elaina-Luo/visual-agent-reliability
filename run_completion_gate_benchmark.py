@@ -85,6 +85,21 @@ def evaluate_samples(run_dir, gate, output_path, resume=False, arms=("B",)):
     run_dir = Path(run_dir)
     output_path = Path(output_path)
     samples = build_samples(run_dir, arms=arms)
+    if not samples:
+        raise ValueError(
+            "No B-arm verification samples found. The run directory must "
+            "contain settings_clean_B episode result.json files and screenshots."
+        )
+    missing_images = [
+        sample["image_path"]
+        for sample in samples
+        if not sample["image_path"].is_file()
+    ]
+    if missing_images:
+        raise FileNotFoundError(
+            f"Missing {len(missing_images)} benchmark screenshots; "
+            f"first missing path: {missing_images[0]}"
+        )
     records = (
         _load_checkpoint(
             output_path, run_dir.name, gate.model_id, gate.prompt_version
@@ -165,8 +180,20 @@ def main():
     args = parser.parse_args()
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
+    samples = build_samples(args.run_dir)
+    if not samples:
+        parser.error(
+            "No B-arm samples found. Upload and extract the complete run "
+            "archive, including settings_clean_B result.json and PNG files."
+        )
+    missing_count = sum(
+        not sample["image_path"].is_file() for sample in samples
+    )
+    if missing_count:
+        parser.error(f"The input run is missing {missing_count} screenshots")
     print("Mode: offline shadow; no Agent actions or policy control")
     print("Prompt:", args.prompt_version)
+    print("Frozen samples:", len(samples))
     print("Loading model:", args.model_id)
     actor = QwenSettingsAgent(args.model_id)
     gate = QwenCompletionGate(actor, prompt_version=args.prompt_version)
@@ -174,6 +201,7 @@ def main():
         args.run_dir, gate, args.output, resume=args.resume
     )
     metrics = result["metrics"]
+    print("Evaluated samples:", metrics["sample_count"])
     print("Completion precision:", metrics["completion_precision"])
     print("Completion recall:", metrics["completion_recall"])
     print("False-positive rate:", metrics["false_positive_rate"])
