@@ -121,28 +121,6 @@ both roles.
 - The result diagnoses this configuration; it does not compare stronger or
   independently trained verifiers.
 
-## Next experiment
-
-The next useful experiment should improve or calibrate the verification signal
-before adding more recovery rules. A strong follow-up would compare:
-
-1. the current shared-model verifier;
-2. a verifier that requires explicit visual evidence of both the requested
-   value and the saved/confirmed state;
-3. a confidence or two-stage gate that abstains on uncertain completion.
-
-The primary target metric should be completion precision against hidden state.
-Only a verifier that clears a preregistered precision threshold should be
-allowed to terminate the Agent. Recovery success can then be evaluated without
-confounding it with an unsafe stopping signal.
-
-The repository now includes `summarize_completion_verifier.py` for this first
-offline audit. It defaults to shadow arm B, labels each prediction using hidden
-state immediately after the corresponding action, and reports a conservative
-qualification gate. The proposed next-study rule requires at least ten
-`complete` predictions and a 95% Wilson lower bound of at least 90% precision.
-This rule is prospective; it was not preregistered for the existing pilot.
-
 ## Offline completion audit result
 
 The B-arm traces supplied 127 action-level verification samples. The binary
@@ -158,12 +136,32 @@ misleading here because non-complete steps dominate the sample. Completion
 precision is the policy-safety metric that explains C's premature stopping.
 The proposed conservative control gate failed.
 
-## Evidence-required follow-up
+## Prompt-only follow-up
 
-`run_completion_gate_benchmark.py` provides the next controlled comparison. It
-replays only saved B-arm screenshots, performs no GUI actions, and gives the
-new completion auditor no hidden state or action history. The
-`G1_evidence_required_v1` prompt defaults to pending and requires visible
-evidence of the exact target value, saved state, and absence of remaining UI
-actions. Its predictions must be evaluated on the same frozen 127 samples and
-pass the prospective precision gate before any new Agent-control experiment.
+`G1_evidence_required_v1` tested whether stricter completion instructions could
+fix the false-positive problem on the same frozen 127 samples. It required
+visible evidence of the requested value, saved state, and absence of remaining
+UI actions. It performed worse than the original verifier.
+
+| Completion method | TP | FP | TN | FN | Precision | Recall | FPR |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Original verifier | 9 | 27 | 91 | 0 | 25.0% | 100% | 22.9% |
+| Evidence-required G1 | 9 | 58 | 60 | 0 | 13.4% | 100% | 49.2% |
+
+There were no parser or inference errors in the G1 run. The model returned
+`pending_action: false` on 67 screenshots, but only 9 represented true task
+completion. Stricter wording therefore did not calibrate completion decisions
+for this model.
+
+## Conclusion
+
+The clean comparison answers the research question directly: adding a verifier
+does not automatically improve GUI Agent reliability. B safely exposed the
+verifier's errors because they could not affect policy. C converted false
+completion predictions into premature termination and reduced task-state
+success from 4/17 to 0/17 in this pilot. A stricter prompt did not solve the
+underlying verifier weakness.
+
+No further prompt or recovery variants are proposed in this study. Future work
+should evaluate a stronger or independently trained verifier on a larger,
+completed benchmark.

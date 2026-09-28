@@ -183,8 +183,8 @@ this verifier did not satisfy the precision needed for a termination authority,
 and that recovery evaluation must measure verifier errors against hidden state
 before using them to control an Agent.
 
-The complete interpretation, failure taxonomy, limitations, and next
-experiment are documented in the [Part B pilot report](docs/part_b_pilot_report.md).
+The complete interpretation, failure taxonomy, and limitations are documented
+in the [Part B pilot report](docs/part_b_pilot_report.md).
 
 Audit the saved B-arm verifier predictions offline, without loading the model
 or changing any Agent action:
@@ -209,8 +209,7 @@ false negatives. Completion recall was 100%, but precision was only 25.0%
 The conservative control gate therefore failed. The compact audit outputs are
 stored in [`results/part_b_completion_verifier_pilot/`](results/part_b_completion_verifier_pilot/).
 
-The next prompt is evaluated on the same frozen screenshots before it can
-control an Agent:
+One prompt-only follow-up was evaluated on the same frozen screenshots:
 
 ```bash
 python run_completion_gate_benchmark.py \
@@ -218,10 +217,19 @@ python run_completion_gate_benchmark.py \
   --output artifacts/completion_gate_g1.json
 ```
 
-`G1_evidence_required_v1` uses a conservative binary decision and requires
-visible evidence of the exact target value, saved state, and no remaining UI
-action. The run is checkpointed with `--resume`; it performs no GUI actions and
-never exposes hidden evaluator state to the model.
+`G1_evidence_required_v1` used stricter instructions requiring visible evidence
+of the target value, saved state, and no remaining action. It performed worse:
+
+| Completion method | Precision | Recall | False-positive rate | Control gate |
+| --- | ---: | ---: | ---: | --- |
+| Original verifier | 25.0% | 100% | 22.9% | Fail |
+| Evidence-required G1 | **13.4%** | 100% | **49.2%** | Fail |
+
+G1 produced 9 true positives, 58 false positives, 60 true negatives, and no
+false negatives. The result shows that stricter prompt wording did not
+calibrate this 3B model's completion decisions. No additional recovery or
+prompt variants are added. Future work should evaluate a stronger or
+independently trained verifier.
 
 ### Observed failure cases
 
