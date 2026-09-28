@@ -135,3 +135,25 @@ The primary target metric should be completion precision against hidden state.
 Only a verifier that clears a preregistered precision threshold should be
 allowed to terminate the Agent. Recovery success can then be evaluated without
 confounding it with an unsafe stopping signal.
+
+The repository now includes `summarize_completion_verifier.py` for this first
+offline audit. It defaults to shadow arm B, labels each prediction using hidden
+state immediately after the corresponding action, and reports a conservative
+qualification gate. The proposed next-study rule requires at least ten
+`complete` predictions and a 95% Wilson lower bound of at least 90% precision.
+This rule is prospective; it was not preregistered for the existing pilot.
+
+## Offline completion audit result
+
+The B-arm traces supplied 127 action-level verification samples. The binary
+completion confusion matrix was 9 true positives, 27 false positives, 91 true
+negatives, and 0 false negatives. Completion recall was therefore 100%, while
+precision was 25.0% (95% Wilson interval: 13.8%-41.1%) and the false-positive
+rate was 22.9%.
+
+This resolves an ambiguity in the episode summary. The verifier did recognize
+every observed completed state, but it was strongly over-sensitive: three of
+every four completion predictions were premature. Overall accuracy (78.7%) is
+misleading here because non-complete steps dominate the sample. Completion
+precision is the policy-safety metric that explains C's premature stopping.
+The proposed conservative control gate failed.

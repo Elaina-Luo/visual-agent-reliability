@@ -186,6 +186,29 @@ before using them to control an Agent.
 The complete interpretation, failure taxonomy, limitations, and next
 experiment are documented in the [Part B pilot report](docs/part_b_pilot_report.md).
 
+Audit the saved B-arm verifier predictions offline, without loading the model
+or changing any Agent action:
+
+```bash
+python summarize_completion_verifier.py \
+  artifacts/settings_ablation_runs/clean_abc_v1
+```
+
+The benchmark compares every `complete` prediction with hidden evaluator state
+immediately after that action. It reports completion precision, recall,
+false-positive rate, a 95% Wilson interval, and a conservative control gate.
+The default qualification rule requires at least ten completion predictions
+and a 95% precision lower bound of at least 90% before the signal is considered
+safe enough to control termination. This is a proposed safety criterion for the
+next experiment, not a threshold preregistered for the existing pilot.
+
+On the saved B-arm pilot, the offline audit evaluated 127 action-level
+predictions: 9 true positives, 27 false positives, 91 true negatives, and no
+false negatives. Completion recall was 100%, but precision was only 25.0%
+(95% Wilson interval: 13.8%-41.1%) and the false-positive rate was 22.9%.
+The conservative control gate therefore failed. The compact audit outputs are
+stored in [`results/part_b_completion_verifier_pilot/`](results/part_b_completion_verifier_pilot/).
+
 ### Observed failure cases
 
 | Failure | Trace evidence | Reliability implication |
