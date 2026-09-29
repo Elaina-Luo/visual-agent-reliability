@@ -1,12 +1,25 @@
 import time
 
-import torch
-from qwen_vl_utils import process_vision_info
-
 from src.completion_gate_prompt import (
     BASELINE_PROMPT_VERSION,
     build_completion_gate_prompt,
 )
+
+
+def load_standalone_completion_model(model_id):
+    """Load optional GPU dependencies only when the benchmark is executed."""
+    import torch
+    from transformers import AutoModelForImageTextToText, AutoProcessor
+
+    processor = AutoProcessor.from_pretrained(model_id)
+    model = AutoModelForImageTextToText.from_pretrained(
+        model_id,
+        dtype=torch.float16,
+        device_map="auto",
+        low_cpu_mem_usage=True,
+    )
+    model.eval()
+    return processor, model
 
 
 class QwenCompletionGate:
@@ -18,7 +31,27 @@ class QwenCompletionGate:
         self.model = actor.model
         self.prompt_version = prompt_version
 
+    @classmethod
+    def from_pretrained(cls, model_id, prompt_version=BASELINE_PROMPT_VERSION):
+        """Load a standalone verifier without creating or running an Actor."""
+        gate = cls.__new__(cls)
+        gate.model_id = model_id
+        gate.processor, gate.model = load_standalone_completion_model(
+            model_id
+        )
+        gate.prompt_version = prompt_version
+        return gate
+
+    def _input_device(self):
+        embeddings = self.model.get_input_embeddings()
+        if embeddings is not None and hasattr(embeddings, "weight"):
+            return embeddings.weight.device
+        return self.model.device
+
     def check(self, image, goal):
+        import torch
+        from qwen_vl_utils import process_vision_info
+
         prompt = build_completion_gate_prompt(goal, self.prompt_version)
         messages = [
             {
@@ -41,7 +74,7 @@ class QwenCompletionGate:
             videos=video_inputs,
             padding=True,
             return_tensors="pt",
-        ).to("cuda")
+        ).to(self._input_device())
 
         start_time = time.perf_counter()
         with torch.inference_mode():

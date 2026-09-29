@@ -2,11 +2,13 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 from PIL import Image
 
 from run_completion_gate_benchmark import build_samples, evaluate_samples
 from src.completion_gate_prompt import EVIDENCE_PROMPT_VERSION
+from src.qwen_completion_gate import QwenCompletionGate
 
 
 class FakeGate:
@@ -45,6 +47,23 @@ def payload():
 
 
 class CompletionGateBenchmarkTests(unittest.TestCase):
+    @patch("src.qwen_completion_gate.load_standalone_completion_model")
+    def test_standalone_gate_loads_verifier_without_actor(self, load_model):
+        processor = MagicMock()
+        model = MagicMock()
+        load_model.return_value = processor, model
+
+        gate = QwenCompletionGate.from_pretrained(
+            "Qwen/Qwen3-VL-4B-Instruct",
+            prompt_version="G0_baseline_v1",
+        )
+
+        self.assertEqual(gate.model_id, "Qwen/Qwen3-VL-4B-Instruct")
+        self.assertEqual(gate.prompt_version, "G0_baseline_v1")
+        load_model.assert_called_once_with(
+            "Qwen/Qwen3-VL-4B-Instruct"
+        )
+
     def test_empty_run_is_rejected_before_reporting_metrics(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

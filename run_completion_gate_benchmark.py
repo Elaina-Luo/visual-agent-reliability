@@ -19,6 +19,9 @@ from src.episode_evaluator import task_state_succeeded
 from src.settings_ablation_summary import load_episode_results
 
 
+DEFAULT_COMPLETION_MODEL_ID = "Qwen/Qwen2.5-VL-3B-Instruct"
+
+
 def load_rgb(path):
     with Image.open(path) as image:
         return image.convert("RGB")
@@ -165,12 +168,11 @@ def evaluate_samples(run_dir, gate, output_path, resume=False, arms=("B",)):
 
 def main():
     from src.qwen_completion_gate import QwenCompletionGate
-    from src.qwen_settings_agent import DEFAULT_MODEL_ID, QwenSettingsAgent
 
     parser = argparse.ArgumentParser()
     parser.add_argument("run_dir", type=Path)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--model-id", default=DEFAULT_MODEL_ID)
+    parser.add_argument("--model-id", default=DEFAULT_COMPLETION_MODEL_ID)
     parser.add_argument(
         "--prompt-version",
         choices=COMPLETION_GATE_PROMPT_VERSIONS,
@@ -195,8 +197,10 @@ def main():
     print("Prompt:", args.prompt_version)
     print("Frozen samples:", len(samples))
     print("Loading model:", args.model_id)
-    actor = QwenSettingsAgent(args.model_id)
-    gate = QwenCompletionGate(actor, prompt_version=args.prompt_version)
+    gate = QwenCompletionGate.from_pretrained(
+        args.model_id,
+        prompt_version=args.prompt_version,
+    )
     result = evaluate_samples(
         args.run_dir, gate, args.output, resume=args.resume
     )
