@@ -239,14 +239,15 @@ loads a standalone verifier and does not rerun or influence the Actor:
 python run_completion_gate_benchmark.py \
   artifacts/settings_ablation_runs/clean_abc_v1 \
   --model-id Qwen/Qwen3-VL-4B-Instruct \
-  --prompt-version G0_baseline_v1 \
-  --output artifacts/completion_gate_qwen3_vl_4b_g0.json
+  --prompt-version G1_evidence_required_v1 \
+  --output artifacts/completion_gate_qwen3_vl_4b_g1.json
 ```
 
-The original `G0_baseline_v1` prompt is fixed so that the verifier model is the
+The existing Qwen2.5-VL-3B G1 result is the baseline, so the prompt, frozen
+samples, labels, parser, and metrics remain fixed and the verifier model is the
 only experimental variable. Compare completion precision, recall, and
-false-positive rate with the original verifier audit. This is a bounded
-diagnostic experiment rather than a new Agent strategy.
+false-positive rate with the G1 row above. This is a bounded diagnostic
+experiment rather than a new Agent strategy.
 
 ### Observed failure cases
 
