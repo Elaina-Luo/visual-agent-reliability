@@ -224,6 +224,7 @@ of the target value, saved state, and no remaining action. It performed worse:
 | --- | ---: | ---: | ---: | --- |
 | Original verifier | 25.0% | 100% | 22.9% | Fail |
 | Evidence-required G1 | **13.4%** | 100% | **49.2%** | Fail |
+| Qwen3-VL-4B + same G1 | 0.0% | 0.0% | 0.0% | Fail |
 
 G1 produced 9 true positives, 58 false positives, 60 true negatives, and no
 false negatives. The result shows that stricter prompt wording did not
@@ -231,9 +232,19 @@ calibrate this 3B model's completion decisions. No additional recovery or
 prompt variants are added. Future work should evaluate a stronger or
 independently trained verifier.
 
-To test whether this failure is specific to the original 3B model, run one
-controlled cross-model comparison on the same 127 frozen screenshots. This
-loads a standalone verifier and does not rerun or influence the Actor:
+The controlled Qwen3-VL-4B follow-up used the same G1 prompt and all 127 frozen
+samples. It predicted no completed states: 0 true positives, 0 false positives,
+118 true negatives, and 9 false negatives. Its 0% false-positive rate avoids
+premature stopping, but its 0% recall cannot recognize valid completion. The
+92.9% overall accuracy is therefore misleading because incomplete states
+dominate the dataset. Changing the model reversed the failure mode from
+over-sensitive completion to an always-incomplete collapse; neither model
+qualified to control termination. The retained result is an aggregate because
+the Colab runtime reset before the per-sample output was downloaded.
+
+Reproduce the controlled cross-model comparison on the same 127 frozen
+screenshots with the following command. It loads a standalone verifier and
+does not rerun or influence the Actor:
 
 ```bash
 python run_completion_gate_benchmark.py \

@@ -147,11 +147,30 @@ UI actions. It performed worse than the original verifier.
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Original verifier | 9 | 27 | 91 | 0 | 25.0% | 100% | 22.9% |
 | Evidence-required G1 | 9 | 58 | 60 | 0 | 13.4% | 100% | 49.2% |
+| Qwen3-VL-4B + same G1 | 0 | 0 | 118 | 9 | 0.0% | 0.0% | 0.0% |
 
 There were no parser or inference errors in the G1 run. The model returned
 `pending_action: false` on 67 screenshots, but only 9 represented true task
 completion. Stricter wording therefore did not calibrate completion decisions
 for this model.
+
+## Cross-model follow-up
+
+Qwen3-VL-4B was evaluated on the same 127 screenshots with the same G1 prompt,
+labels, parser, and metrics. It never predicted completion. This removed false
+positives but also missed all 9 completed states. Its 92.9% overall accuracy
+comes entirely from the 118 incomplete examples and is not evidence of a useful
+completion detector. The conservative control gate failed because there were
+no positive predictions.
+
+The model-only change therefore reversed the error direction: Qwen2.5-VL-3B
+was over-sensitive, while Qwen3-VL-4B collapsed to always incomplete. This
+supports a stronger conclusion than a single-model failure: completion control
+is highly model-calibration dependent, and zero false positives alone is not
+sufficient when recall is zero. The aggregate result is retained under
+`results/part_b_completion_gate_qwen3_vl_4b_g1/`; the Colab runtime reset before
+the per-sample JSON and latency values were downloaded, so those values are not
+reconstructed.
 
 ## Conclusion
 
@@ -160,7 +179,9 @@ does not automatically improve GUI Agent reliability. B safely exposed the
 verifier's errors because they could not affect policy. C converted false
 completion predictions into premature termination and reduced task-state
 success from 4/17 to 0/17 in this pilot. A stricter prompt did not solve the
-underlying verifier weakness.
+underlying verifier weakness. A newer 4B model avoided premature completion by
+never recognizing completion, showing that changing models can exchange one
+unsafe failure mode for another rather than produce a calibrated stop signal.
 
 No further prompt or recovery variants are proposed in this study. Future work
 should evaluate a stronger or independently trained verifier on a larger,
